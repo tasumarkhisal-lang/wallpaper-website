@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallpaper Hub - Ultra HD Wallpapers</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar">
+    <div class="logo"><i class="fa-solid fa-wand-magic-sparkles"></i> WallpaperHub</div>
+    <div class="nav-actions">
+      <button id="favoritesToggleBtn" class="nav-btn" onclick="showFavorites()"><i class="fa-solid fa-heart"></i> Favorites</button>
+      <button id="themeToggleBtn" class="nav-btn"><i class="fa-solid fa-moon"></i></button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <h1>JennWall 4K Wallpaper</h1>
+    <p>Download ultra HD 4K wallpapers for your desktop & phone</p>
+    
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input type="text" id="searchInput" placeholder="Search here..." autocomplete="off">
+      <button id="searchBtn">Search</button>
+      
+      <!-- Recent Searches Dropdown -->
+      <div id="recentSearches" class="recent-searches"></div>
+    </div>
+
+    <!-- Quick Category Chips -->
+    <div class="categories">
+      <button class="chip active" onclick="filterCategory('4k wallpaper')">All</button>
+      <button class="chip" onclick="filterCategory('nature')">Nature</button>
+      <button class="chip" onclick="filterCategory('anime')">Anime</button>
+      <button class="chip" onclick="filterCategory('cars')">Cars</button>
+      <button class="chip" onclick="filterCategory('aesthetic')">Aesthetic</button>
+      <button class="chip" onclick="filterCategory('dark aesthetic')">Dark</button>
+    </div>
+
+    <div class="filters-row">
+      <div class="filter-group">
+        <label><i class="fa-solid fa-crop-simple"></i> Orientation:</label>
+        <select id="orientationFilter" onchange="applyFilters()">
+          <option value="">All Types</option>
+          <option value="landscape">Desktop (Landscape)</option>
+          <option value="portrait">Mobile (Portrait)</option>
+          <option value="square">Square</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label><i class="fa-solid fa-palette"></i> Color:</label>
+        <select id="colorFilter" onchange="applyFilters()">
+          <option value="">All Colors</option>
+          <option value="red">Red</option>
+          <option value="blue">Blue</option>
+          <option value="green">Green</option>
+          <option value="yellow">Yellow</option>
+          <option value="black">Black</option>
+          <option value="white">White</option>
+        </select>
+      </div>
+    </div>
+
+  </header>
+
+  <!-- Gallery Section -->
+  <main class="container">
+    <div id="loading" class="spinner"></div>
+    <div class="gallery" id="wallpaperGallery"></div>
+  </main>
+
+  <!-- Image Lightbox Modal -->
+  <div id="imageModal" class="modal">
+    <span class="close-modal" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="modalImg">
+    <div id="modalCaption"></div>
+  </div>
+
+  <!-- NAYA ADDITION: Full Screen Wallpaper Detail View Modal (With Related Wallpapers) -->
+  <div id="wallpaperDetailModal" class="wallpaper-modal">
+    <div class="wallpaper-modal-content">
+      <button class="close-detail-btn" onclick="closeWallpaperDetail()" title="Close">&times;</button>
+      
+      <!-- Main Large Image View -->
+      <div class="full-image-container">
+        <img id="detailMainImage" src="" alt="Full View Wallpaper">
+        <div class="detail-actions">
+          <button id="detailDownloadBtn" class="action-btn"><i class="fa-solid fa-download"></i> Download</button>
+          <button id="detailShareBtn" class="action-btn"><i class="fa-solid fa-share-nodes"></i> Share</button>
+        </div>
+      </div>
+
+      <!-- Related Wallpapers Section -->
+      <div class="related-section">
+        <h3>Related Wallpapers</h3>
+        <div id="relatedGrid" class="related-grid">
+          <!-- Related wallpapers will load here dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="toast">Action completed!</div>
+
+  <!-- Social Share Modal -->
+  <div id="shareModal" class="modal">
+    <div class="share-modal-content">
+      <!-- Close Button (✖) -->
+      <button class="close-share-btn" onclick="closeShareModal()" title="Close">&times;</button>
+      
+      <h3>Share Wallpaper</h3>
+      <div class="share-buttons">
+        <button onclick="shareToSocial('whatsapp')" class="share-btn whatsapp"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+        <button onclick="shareToSocial('facebook')" class="share-btn facebook"><i class="fa-brands fa-facebook-f"></i> Facebook</button>
+        <button onclick="shareToSocial('twitter')" class="share-btn twitter"><i class="fa-brands fa-x-twitter"></i> Twitter</button>
+        <button onclick="shareToSocial('pinterest')" class="share-btn pinterest"><i class="fa-brands fa-pinterest"></i> Pinterest</button>
+      </div>
+      <div class="copy-link-box">
+        <input type="text" id="shareLinkInput" readonly>
+        <button onclick="copyShareLink()"><i class="fa-regular fa-copy"></i> Copy</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="script.js"></script>
+  
+</body>
+</html>
