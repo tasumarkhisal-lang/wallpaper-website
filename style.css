@@ -153,10 +153,10 @@ body {
   padding: 20px;
 }
 
+/* Gallery Container (Masonry Layout) */
 .gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+  column-count: 3; /* Laptop / Desktop par 3 columns banenge */
+  column-gap: 20px;
 }
 
 .card {
@@ -164,14 +164,17 @@ body {
   border-radius: 16px;
   overflow: hidden;
   background: var(--card-bg);
-  aspect-ratio: 3 / 4;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  
+  /* Masonry ke liye zaroori properties */
+  break-inside: avoid;
+  margin-bottom: 20px; 
 }
 
 .card img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto; /* Fixed height khatam! Ab image apne original size ke hisab se adjustment karegi */
+  display: block;
   transition: transform 0.4s ease;
   cursor: pointer;
 }
@@ -595,9 +598,9 @@ body {
   }
 
   /* Main Gallery Grid: Mobile par exact 2 columns */
-  .gallery {
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 10px; /* Clean gap between wallpapers */
+ .gallery {
+    column-count: 2;
+    column-gap: 10px;
   }
 
   .card {
