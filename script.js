@@ -13,6 +13,7 @@ let isLoading = false;
 let hasMore = true;
 let isFavoritesView = false;
 
+// Filter Variables
 let selectedOrientation = '';
 let selectedColor = '';
 let currentShareUrl = '';
@@ -21,7 +22,7 @@ const loadedImageIds = new Set();
 let favorites = JSON.parse(localStorage.getItem('fav_wallpapers')) || [];
 let recentSearches = JSON.parse(localStorage.getItem('recent_searches')) || [];
 
-// Theme Toggle
+// 1. Theme Toggle Logic
 if (themeToggleBtn) {
   themeToggleBtn.addEventListener('click', () => {
     document.body.classList.toggle('light-mode');
@@ -30,20 +31,16 @@ if (themeToggleBtn) {
   });
 }
 
-// Toast Notification
+// 2. Toast Notification
 function showToast(message) {
-  let toast = document.getElementById('toast');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.id = 'toast';
-    document.body.appendChild(toast);
-  }
+  const toast = document.getElementById('toast');
+  if (!toast) return;
   toast.innerText = message;
   toast.className = "toast show";
   setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
 }
 
-// Download Image
+// 3. Download Image Function
 async function downloadImage(imgUrl, fileName) {
   showToast("Downloading started...");
   try {
@@ -63,7 +60,7 @@ async function downloadImage(imgUrl, fileName) {
   }
 }
 
-// Favorites Logic
+// 4. Toggle Favorites
 function toggleFavorite(photo) {
   const index = favorites.findIndex(item => item.id === photo.id);
   if (index === -1) {
@@ -83,6 +80,7 @@ function toggleFavorite(photo) {
   }
 }
 
+// 5. Show Favorites Page
 function showFavorites() {
   isFavoritesView = true;
   gallery.innerHTML = '';
@@ -96,7 +94,7 @@ function showFavorites() {
   favorites.forEach(photo => renderCard(photo));
 }
 
-// Social Share
+// 6. Social Share Functions
 function openShareModal(imgUrl) {
   currentShareUrl = imgUrl;
   const shareModal = document.getElementById('shareModal');
@@ -110,43 +108,128 @@ function closeShareModal() {
   if (shareModal) shareModal.style.display = 'none';
 }
 
-// Auto-Creating Dynamic Wallpaper Detail Modal
-function openWallpaperDetail(photo) {
-  let modal = document.getElementById('wallpaperDetailModal');
-  
-  // Dynamic Modal Creation if HTML is missing it
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.id = 'wallpaperDetailModal';
-    modal.style.cssText = `
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85); z-index: 9999; display: flex;
-      justify-content: center; align-items: center; padding: 20px;
-      box-sizing: border-box; backdrop-filter: blur(5px);
-    `;
-    modal.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
-    document.body.appendChild(modal);
+function copyShareLink() {
+  const shareInput = document.getElementById('shareLinkInput');
+  if (!shareInput) return;
+  navigator.clipboard.writeText(shareInput.value).then(() => {
+    showToast("Link copied to clipboard! 📋");
+    closeShareModal();
+  });
+}
+
+function shareToSocial(platform) {
+  const text = encodeURIComponent("Check out this amazing wallpaper!");
+  const url = encodeURIComponent(currentShareUrl);
+  let shareUrl = '';
+
+  if (platform === 'whatsapp') shareUrl = `https://api.whatsapp.com/send?text=${text}%20${url}`;
+  else if (platform === 'facebook') shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+  else if (platform === 'twitter') shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+  else if (platform === 'pinterest') shareUrl = `https://pinterest.com/pin/create/button/?url=${url}&media=${url}&description=${text}`;
+
+  window.open(shareUrl, '_blank');
+}
+
+// 7. Recent Searches Logic
+function saveRecentSearch(query) {
+  if (!query) return;
+  recentSearches = recentSearches.filter(q => q.toLowerCase() !== query.toLowerCase());
+  recentSearches.unshift(query);
+  if (recentSearches.length > 5) recentSearches.pop();
+  localStorage.setItem('recent_searches', JSON.stringify(recentSearches));
+}
+
+function renderRecentSearches() {
+  if (!recentSearchesContainer) return;
+  if (recentSearches.length === 0) {
+    recentSearchesContainer.classList.remove('show');
+    return;
   }
+  recentSearchesContainer.innerHTML = '';
+  recentSearches.forEach(term => {
+    const chip = document.createElement('span');
+    chip.className = 'recent-chip';
+    chip.innerHTML = `${term}`;
+    chip.onclick = () => {
+      searchInput.value = term;
+      recentSearchesContainer.classList.remove('show');
+      handleSearch();
+    };
+    recentSearchesContainer.appendChild(chip);
+  });
+}
+
+if (searchInput) {
+  searchInput.addEventListener('focus', () => {
+    renderRecentSearches();
+    if (recentSearches.length > 0 && recentSearchesContainer) recentSearchesContainer.classList.add('show');
+  });
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-box') && recentSearchesContainer) {
+    recentSearchesContainer.classList.remove('show');
+  }
+});
+
+// 8. Wallpaper Detail View & Related Wallpapers Logic (Matched with HTML IDs)
+function openWallpaperDetail(photo) {
+  const modal = document.getElementById('wallpaperDetailModal');
+  const mainImg = document.getElementById('detailMainImage'); // Exactly HTML wali ID
+  const downloadBtn = document.getElementById('detailDownloadBtn');
+  const shareBtn = document.getElementById('detailShareBtn');
+
+  if (!modal || !mainImg) return;
 
   const titleName = photo.alt ? photo.alt.replace(/[^a-zA-Z0-9]/g, "_") : `wallpaper_${photo.id}`;
 
-  modal.innerHTML = `
-    <div style="background: #1e1e2e; color: white; padding: 20px; border-radius: 16px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; text-align: center;">
-      <button onclick="document.getElementById('wallpaperDetailModal').style.display='none'" style="position: absolute; right: 15px; top: 15px; background: rgba(255,255,255,0.2); border: none; color: white; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 16px;">✕</button>
-      <img src="${photo.src.large2x || photo.src.original}" style="width: 100%; max-height: 60vh; object-fit: contain; border-radius: 12px; margin-bottom: 15px;">
-      <h3 style="margin: 10px 0; font-size: 1.1rem; font-weight: 500;">${photo.alt || 'HD Wallpaper'}</h3>
-      <p style="color: #a6adc8; font-size: 0.9rem; margin-bottom: 15px;">By ${photo.photographer}</p>
-      <div style="display: flex; gap: 10px; justify-content: center;">
-        <button id="modalDownloadBtn" style="padding: 10px 20px; background: #89b4fa; color: #11111b; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Download HD</button>
-      </div>
-    </div>
-  `;
+  mainImg.src = photo.src.large2x || photo.src.original;
+  if (downloadBtn) downloadBtn.onclick = () => downloadImage(photo.src.original, titleName);
+  if (shareBtn) shareBtn.onclick = () => openShareModal(photo.src.original);
 
-  document.getElementById('modalDownloadBtn').onclick = () => downloadImage(photo.src.original, titleName);
-  modal.style.display = 'flex';
+  modal.classList.add('show');
+  modal.style.display = 'block'; // Ensure modal is visible
+  loadRelatedWallpapers(photo.alt || currentQuery);
 }
 
-// Render Card Function
+function closeWallpaperDetail() {
+  const modal = document.getElementById('wallpaperDetailModal');
+  if (modal) {
+    modal.classList.remove('show');
+    modal.style.display = 'none';
+  }
+}
+
+async function loadRelatedWallpapers(queryKeyword) {
+  const relatedGrid = document.getElementById('relatedGrid');
+  if (!relatedGrid) return;
+  relatedGrid.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted);">Loading related wallpapers...</p>';
+
+  try {
+    const apiUrl = `https://api.pexels.com/v1/search?query=${encodeURIComponent(queryKeyword)}&per_page=6`;
+    const response = await fetch(apiUrl, {
+      headers: { Authorization: apiKey }
+    });
+    const data = await response.json();
+
+    relatedGrid.innerHTML = '';
+    if (data.photos && data.photos.length > 0) {
+      data.photos.forEach(relPhoto => {
+        const img = document.createElement('img');
+        img.src = relPhoto.src.medium;
+        img.alt = relPhoto.alt || 'Related Wallpaper';
+        img.onclick = () => openWallpaperDetail(relPhoto);
+        relatedGrid.appendChild(img);
+      });
+    } else {
+      relatedGrid.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted);">No related wallpapers found.</p>';
+    }
+  } catch (error) {
+    relatedGrid.innerHTML = '';
+  }
+}
+
+// 9. Render Card Element (Connected to Entire Card)
 function renderCard(photo) {
   const card = document.createElement('div');
   card.classList.add('card');
@@ -208,13 +291,13 @@ function renderCard(photo) {
   card.appendChild(imgElem);
   card.appendChild(overlay);
 
-  // Entire Card Click Event
+  // Card par click karne se Detail Modal khulega
   card.onclick = () => openWallpaperDetail(photo);
 
   gallery.appendChild(card);
 }
 
-// Fetch Wallpapers API
+// 10. Fetch Wallpapers API
 async function fetchWallpapers(query, page = 1) {
   if (isLoading || !hasMore || isFavoritesView) return;
   isLoading = true;
@@ -254,6 +337,18 @@ async function fetchWallpapers(query, page = 1) {
   }
 }
 
+// Apply Filters
+function applyFilters() {
+  const orientationElem = document.getElementById('orientationFilter');
+  const colorElem = document.getElementById('colorFilter');
+  if (orientationElem) selectedOrientation = orientationElem.value;
+  if (colorElem) selectedColor = colorElem.value;
+  
+  resetGallery();
+  fetchWallpapers(currentQuery, currentPage);
+}
+
+// Reset Logic
 function resetGallery() {
   isFavoritesView = false;
   currentPage = 1;
@@ -265,6 +360,7 @@ function resetGallery() {
 function handleSearch() {
   const query = searchInput.value.trim();
   if (query) {
+    saveRecentSearch(query);
     if (recentSearchesContainer) recentSearchesContainer.classList.remove('show');
     currentQuery = query;
     resetGallery();
@@ -272,6 +368,21 @@ function handleSearch() {
   }
 }
 
+function filterCategory(categoryName) {
+  currentQuery = categoryName;
+  resetGallery();
+  document.querySelectorAll('.chip').forEach(btn => btn.classList.remove('active'));
+  if (window.event && window.event.target) window.event.target.classList.add('active');
+  fetchWallpapers(currentQuery, currentPage);
+}
+
+// Lightbox Modal Fallback
+function closeModal() {
+  const modal = document.getElementById('imageModal');
+  if (modal) modal.style.display = "none";
+}
+
+// Event Listeners
 if (searchBtn) searchBtn.addEventListener('click', handleSearch);
 if (searchInput) searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
 
@@ -285,4 +396,18 @@ window.addEventListener('scroll', () => {
   }
 });
 
+// Window Outside Click Listener
+window.addEventListener('click', (e) => {
+  const shareModal = document.getElementById('shareModal');
+  const detailModal = document.getElementById('wallpaperDetailModal');
+
+  if (e.target === shareModal) {
+    closeShareModal();
+  }
+  if (e.target === detailModal) {
+    closeWallpaperDetail();
+  }
+});
+
+// Initial Load
 fetchWallpapers(currentQuery, currentPage);
