@@ -175,7 +175,7 @@ document.addEventListener('click', (e) => {
 // 8. Wallpaper Detail View & Related Wallpapers Logic (Matched with HTML IDs)
 function openWallpaperDetail(photo) {
   const modal = document.getElementById('wallpaperDetailModal');
-  const mainImg = document.getElementById('detailMainImage'); // Exactly HTML wali ID
+  const mainImg = document.getElementById('detailMainImage');
   const downloadBtn = document.getElementById('detailDownloadBtn');
   const shareBtn = document.getElementById('detailShareBtn');
 
@@ -184,14 +184,23 @@ function openWallpaperDetail(photo) {
   const titleName = photo.alt ? photo.alt.replace(/[^a-zA-Z0-9]/g, "_") : `wallpaper_${photo.id}`;
 
   mainImg.src = photo.src.large2x || photo.src.original;
-  if (downloadBtn) downloadBtn.onclick = () => downloadImage(photo.src.original, titleName);
-  if (shareBtn) shareBtn.onclick = () => openShareModal(photo.src.original);
+  
+  if (downloadBtn) {
+    downloadBtn.onclick = () => downloadImage(photo.src.original, titleName);
+  }
+  
+  // Detail Modal Share Button Fix
+  if (shareBtn) {
+    shareBtn.onclick = (e) => {
+      e.stopPropagation();
+      openShareModal(photo.src.original);
+    };
+  }
 
   modal.classList.add('show');
-  modal.style.display = 'block'; // Ensure modal is visible
+  modal.style.display = 'block';
   loadRelatedWallpapers(photo.alt || currentQuery);
 }
-
 function closeWallpaperDetail() {
   const modal = document.getElementById('wallpaperDetailModal');
   if (modal) {

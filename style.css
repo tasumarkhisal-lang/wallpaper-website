@@ -628,3 +628,7 @@ body {
     padding: 12px 16px;
   }
 }
+/* Share Modal hamesha sab se upar dikhne ke liye */
+#shareModal {
+  z-index: 10000 !important;
+}
