@@ -8,15 +8,103 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+  <!-- Unsplash Style Left Icon Sidebar -->
+<aside class="left-icon-sidebar">
+  <div class="sidebar-top-icons">
+    <!-- Website Logo Icon -->
+    <a href="#" class="sidebar-icon logo-icon" onclick="resetToHome()" title="Home">
+      <i class="fa-solid fa-wand-magic-sparkles"></i>
+    </a>
+    
+    <!-- Home / Wallpapers -->
+    <button class="sidebar-icon" onclick="resetToHome()" title="Wallpapers">
+      <i class="fa-regular fa-image"></i>
+    </button>
+    
+    <!-- Live Wallpapers -->
+    <button class="sidebar-icon" onclick="filterCategory('live wallpaper')" title="Live Wallpapers">
+      <i class="fa-solid fa-circle-play"></i>
+    </button>
 
-  <!-- Top Navigation Bar -->
-  <nav class="navbar">
-    <div class="logo"><i class="fa-solid fa-wand-magic-sparkles"></i> WallpaperHub</div>
-    <div class="nav-actions">
-      <button id="favoritesToggleBtn" class="nav-btn" onclick="showFavorites()"><i class="fa-solid fa-heart"></i> Favorites</button>
-      <button id="themeToggleBtn" class="nav-btn"><i class="fa-solid fa-moon"></i></button>
-    </div>
-  </nav>
+    <div class="sidebar-divider"></div>
+
+    <!-- Explore / Trending -->
+    <button class="sidebar-icon" onclick="filterCategory('4k wallpaper')" title="Explore Trending">
+      <i class="fa-regular fa-compass"></i>
+    </button>
+
+    <!-- Download History -->
+    <button class="sidebar-icon" onclick="showDownloadHistory()" title="Download History">
+      <i class="fa-solid fa-download"></i>
+    </button>
+
+    <!-- Favorites / Bookmarks -->
+    <button class="sidebar-icon" onclick="showFavorites()" title="Favorites">
+      <i class="fa-regular fa-bookmark"></i>
+    </button>
+  </div>
+
+  <div class="sidebar-bottom-icons">
+    <!-- Login / User Profile -->
+    <a href="login.html" class="sidebar-icon" title="Login / Profile">
+      <i class="fa-regular fa-user"></i>
+    </a>
+
+   <button id="sidebarLangBtn" class="sidebar-icon" onclick="toggleLanguageDropdown(event)" title="Select Language">
+  <i class="fa-solid fa-language"></i>
+</button>
+
+    <!-- About Us / Info -->
+    <button class="sidebar-icon" onclick="openAboutModal()" title="About Us">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </div>
+</aside>
+<!-- Floating Language Popover Box (Unsplash Style) -->
+<div id="langDropdown" class="lang-popover">
+  <div class="lang-popover-header">Select your language</div>
+  <ul class="lang-list">
+    <li onclick="selectLanguage('Deutsch', this)"><span class="check-icon"></span> Deutsch</li>
+    <li onclick="selectLanguage('English', this)" class="active"><span class="check-icon">✓</span> English</li>
+    <li onclick="selectLanguage('Español', this)"><span class="check-icon"></span> Español</li>
+    <li onclick="selectLanguage('Français', this)"><span class="check-icon"></span> Français</li>
+    <li onclick="selectLanguage('Bahasa Indonesia', this)"><span class="check-icon"></span> Bahasa Indonesia</li>
+    <li onclick="selectLanguage('Italiano', this)"><span class="check-icon"></span> Italiano</li>
+    <li onclick="selectLanguage('日本語(japanese)', this)"><span class="check-icon"></span> 日本語(japanese)</li>
+    <li onclick="selectLanguage('한국어(korean)', this)"><span class="check-icon"></span> 한국어(korean)</li>
+    <li onclick="selectLanguage('Português (Brasil)', this)"><span class="check-icon"></span> Português (Brasil)</li>
+    <li onclick="selectLanguage('Urdu', this)"><span class="check-icon"></span> اردو (Urdu)</li>
+  </ul>
+</div>
+
+<!-- About Us Modal -->
+<div id="aboutModal" class="custom-modal">
+  <div class="custom-modal-content">
+    <span class="modal-close-btn" onclick="closeAboutModal()">&times;</span>
+    <h3>About WallpaperHub</h3>
+    <p style="margin-top: 10px; font-size: 0.9rem; color: #aaa; line-height: 1.5;">
+      WallpaperHub provides free ultra HD wallpapers & live backgrounds powered by Pexels API. Created for high quality desktop & mobile customization.
+    </p>
+  </div>
+</div>
+
+ <!-- Top Navigation Bar -->
+<nav class="navbar">
+  <div class="logo"><i class="fa-solid fa-wand-magic-sparkles"></i> WallpaperHub</div>
+  <div class="nav-actions">
+    <!-- Sirf Heart Symbol aur Count show hoga -->
+    <button id="favoritesToggleBtn" class="nav-btn" onclick="showFavorites()" title="Favorites">
+      <i class="fa-solid fa-heart" style="color: #fcfcfc;"></i> (<span id="favCount">0</span>)
+    </button>
+    
+    <button id="themeToggleBtn" class="nav-btn"><i class="fa-solid fa-moon"></i></button>
+    
+    <!-- Login Icon Only -->
+    <a href="login.html" class="login-btn-nav" title="Login / Sign Up">
+      <i class="fa-solid fa-user"></i>
+    </a>
+  </div>
+</nav>
 
   <!-- Hero Section -->
   <header class="hero">
@@ -65,6 +153,16 @@
           <option value="white">White</option>
         </select>
       </div>
+
+      <!-- New Sort Filter -->
+      <div class="filter-group">
+        <label><i class="fa-solid fa-arrow-down-wide-short"></i> Sort By:</label>
+        <select id="sortFilter" onchange="applyFilters()">
+          <option value="relevant">Relevant</option>
+          <option value="popular">Most Popular</option>
+          <option value="latest">Latest</option>
+        </select>
+      </div>
     </div>
 
   </header>
@@ -82,7 +180,7 @@
     <div id="modalCaption"></div>
   </div>
 
-  <!-- NAYA ADDITION: Full Screen Wallpaper Detail View Modal (With Related Wallpapers) -->
+  <!-- Full Screen Wallpaper Detail View Modal (With Related Wallpapers) -->
   <div id="wallpaperDetailModal" class="wallpaper-modal">
     <div class="wallpaper-modal-content">
       <button class="close-detail-btn" onclick="closeWallpaperDetail()" title="Close">&times;</button>
@@ -93,6 +191,7 @@
         <div class="detail-actions">
           <button id="detailDownloadBtn" class="action-btn"><i class="fa-solid fa-download"></i> Download</button>
           <button id="detailShareBtn" class="action-btn"><i class="fa-solid fa-share-nodes"></i> Share</button>
+          <button id="detailFavBtn" class="action-btn"><i class="fa-regular fa-heart"></i> Favorite</button>
         </div>
       </div>
 
@@ -112,7 +211,6 @@
   <!-- Social Share Modal -->
   <div id="shareModal" class="modal">
     <div class="share-modal-content">
-      <!-- Close Button (✖) -->
       <button class="close-share-btn" onclick="closeShareModal()" title="Close">&times;</button>
       
       <h3>Share Wallpaper</h3>

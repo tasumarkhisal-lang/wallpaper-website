@@ -1,4 +1,4 @@
-const apiKey = 'AqInvPqZLEnPVxf4y72FAKybuAKUafbWNu6FjwIr9GZO9aYdEVfiti7F';
+const UNSPLASH_ACCESS_KEY = 'kmwR0yF5WD3sLP8plZ2r_oSGMcuw0eHfCksqSDEp__c';
 
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
@@ -16,11 +16,33 @@ let isFavoritesView = false;
 // Filter Variables
 let selectedOrientation = '';
 let selectedColor = '';
+let selectedSort = 'relevant';
 let currentShareUrl = '';
 
 const loadedImageIds = new Set();
 let favorites = JSON.parse(localStorage.getItem('fav_wallpapers')) || [];
 let recentSearches = JSON.parse(localStorage.getItem('recent_searches')) || [];
+
+// Helper function: Unsplash raw response ko app format mein normalize karne ke liye
+function formatUnsplashPhoto(item) {
+  if (!item) return null;
+  if (item.src && item.photographer !== undefined) return item; // Pehle se formatted ya saved hai
+
+  return {
+    id: item.id,
+    src: {
+      large: item.urls?.regular || item.urls?.small || '',
+      large2x: item.urls?.full || item.urls?.regular || '',
+      original: item.urls?.raw || item.urls?.full || item.urls?.regular || '',
+      medium: item.urls?.small || item.urls?.regular || ''
+    },
+    photographer: item.user?.name || item.user?.username || 'Unsplash',
+    alt: item.alt_description || item.description || 'Wallpaper'
+  };
+}
+
+// Page Load par Favorites Counter Set Karein
+updateFavCount();
 
 // 1. Theme Toggle Logic
 if (themeToggleBtn) {
@@ -40,23 +62,70 @@ function showToast(message) {
   setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
 }
 
-// 3. Download Image Function
+// Favorites Counter Updater
+function updateFavCount() {
+  const countSpan = document.getElementById('favCount');
+  if (countSpan) {
+    countSpan.innerText = favorites.length;
+  }
+}
+// 3. Download Image Function (100% Fix for Windows .jfif & Mobile Gallery)
 async function downloadImage(imgUrl, fileName) {
   showToast("Downloading started...");
+
+  // File name se special characters remove karke clean name banayein
+  const cleanFileName = fileName ? fileName.replace(/[^a-zA-Z0-9_-]/g, "_") : "wallpaper";
+
   try {
+    // 1. Image Data Fetch Karein
     const response = await fetch(imgUrl);
-    const blob = await response.blob();
-    const blobUrl = URL.createObjectURL(blob);
-    
+    const originalBlob = await response.blob();
+
+    // 2. File ko FORCEFULLY pure 'image/jpeg' format mein convert karein
+    const jpegBlob = new Blob([originalBlob], { type: 'image/jpeg' });
+    const blobUrl = URL.createObjectURL(jpegBlob);
+
+    // 3. Clean .jpg file download trigger karein
     const a = document.createElement('a');
     a.href = blobUrl;
-    a.download = `${fileName}.jpg`;
+    a.download = `${cleanFileName}.jpg`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(blobUrl);
+
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+    showToast("Downloaded to device! 📁");
   } catch (error) {
-    window.open(imgUrl, '_blank');
+    // Fallback: Canvas to JPEG Blob
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = imgUrl + (imgUrl.includes('?') ? '&' : '?') + 'cors_bypass=' + Date.now();
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const blobUrl = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = blobUrl;
+          a.download = `${cleanFileName}.jpg`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+          showToast("Downloaded to device! 📁");
+        }
+      }, "image/jpeg", 0.95);
+    };
+
+    img.onerror = () => {
+      window.open(imgUrl, '_blank');
+    };
   }
 }
 
@@ -71,12 +140,22 @@ function toggleFavorite(photo) {
     showToast("Removed from Favorites 💔");
   }
   localStorage.setItem('fav_wallpapers', JSON.stringify(favorites));
+  updateFavCount();
   
   if (isFavoritesView) {
     showFavorites();
   } else {
     const btn = document.getElementById(`fav-btn-${photo.id}`);
     if (btn) btn.classList.toggle('liked');
+    
+    // Detail Modal Fav Button sync
+    const detailFavBtn = document.getElementById('detailFavBtn');
+    if (detailFavBtn) {
+      const isFavNow = favorites.some(item => item.id === photo.id);
+      detailFavBtn.innerHTML = isFavNow 
+        ? '<i class="fa-solid fa-heart" style="color: #ff4757;"></i> Favorited' 
+        : '<i class="fa-regular fa-heart"></i> Favorite';
+    }
   }
 }
 
@@ -87,7 +166,7 @@ function showFavorites() {
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
 
   if (favorites.length === 0) {
-    gallery.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No favorites saved yet!</p>';
+    gallery.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px 0;">No favorites saved yet! ❤️</p>';
     return;
   }
 
@@ -172,24 +251,26 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// 8. Wallpaper Detail View & Related Wallpapers Logic (Matched with HTML IDs)
+// 8. Wallpaper Detail View & Related Wallpapers Logic
 function openWallpaperDetail(photo) {
   const modal = document.getElementById('wallpaperDetailModal');
   const mainImg = document.getElementById('detailMainImage');
   const downloadBtn = document.getElementById('detailDownloadBtn');
   const shareBtn = document.getElementById('detailShareBtn');
+  const detailFavBtn = document.getElementById('detailFavBtn');
+  const modalContent = document.querySelector('.wallpaper-modal-content');
 
   if (!modal || !mainImg) return;
 
   const titleName = photo.alt ? photo.alt.replace(/[^a-zA-Z0-9]/g, "_") : `wallpaper_${photo.id}`;
 
+  // Main Image Update
   mainImg.src = photo.src.large2x || photo.src.original;
   
   if (downloadBtn) {
     downloadBtn.onclick = () => downloadImage(photo.src.original, titleName);
   }
   
-  // Detail Modal Share Button Fix
   if (shareBtn) {
     shareBtn.onclick = (e) => {
       e.stopPropagation();
@@ -197,10 +278,30 @@ function openWallpaperDetail(photo) {
     };
   }
 
+  if (detailFavBtn) {
+    const isFav = favorites.some(item => item.id === photo.id);
+    detailFavBtn.innerHTML = isFav 
+      ? '<i class="fa-solid fa-heart" style="color: #ff4757;"></i> Favorited' 
+      : '<i class="fa-regular fa-heart"></i> Favorite';
+    
+    detailFavBtn.onclick = (e) => {
+      e.stopPropagation();
+      toggleFavorite(photo);
+    };
+  }
+
   modal.classList.add('show');
   modal.style.display = 'block';
+
+  if (modalContent) {
+    modalContent.scrollTop = 0;
+  }
+  modal.scrollTop = 0;
+
+  // Load Related Wallpapers via Unsplash
   loadRelatedWallpapers(photo.alt || currentQuery);
 }
+
 function closeWallpaperDetail() {
   const modal = document.getElementById('wallpaperDetailModal');
   if (modal) {
@@ -212,33 +313,36 @@ function closeWallpaperDetail() {
 async function loadRelatedWallpapers(queryKeyword) {
   const relatedGrid = document.getElementById('relatedGrid');
   if (!relatedGrid) return;
-  relatedGrid.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted);">Loading related wallpapers...</p>';
+  relatedGrid.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); text-align: center; grid-column: 1/-1;">Loading related wallpapers...</p>';
 
   try {
-    const apiUrl = `https://api.pexels.com/v1/search?query=${encodeURIComponent(queryKeyword)}&per_page=6`;
-    const response = await fetch(apiUrl, {
-      headers: { Authorization: apiKey }
-    });
+    const apiUrl = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(queryKeyword)}&per_page=12&client_id=${UNSPLASH_ACCESS_KEY}`;
+    const response = await fetch(apiUrl);
     const data = await response.json();
 
     relatedGrid.innerHTML = '';
-    if (data.photos && data.photos.length > 0) {
-      data.photos.forEach(relPhoto => {
+    const photos = data.results || [];
+    if (photos.length > 0) {
+      photos.forEach(rawItem => {
+        const relPhoto = formatUnsplashPhoto(rawItem);
         const img = document.createElement('img');
         img.src = relPhoto.src.medium;
         img.alt = relPhoto.alt || 'Related Wallpaper';
+        img.style.cursor = 'pointer';
+        
         img.onclick = () => openWallpaperDetail(relPhoto);
+        
         relatedGrid.appendChild(img);
       });
     } else {
-      relatedGrid.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted);">No related wallpapers found.</p>';
+      relatedGrid.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); grid-column: 1/-1; text-align: center;">No related wallpapers found.</p>';
     }
   } catch (error) {
     relatedGrid.innerHTML = '';
   }
 }
 
-// 9. Render Card Element (Connected to Entire Card)
+// 9. Render Card Element
 function renderCard(photo) {
   const card = document.createElement('div');
   card.classList.add('card');
@@ -300,40 +404,51 @@ function renderCard(photo) {
   card.appendChild(imgElem);
   card.appendChild(overlay);
 
-  // Card par click karne se Detail Modal khulega
+  // Card click loads detail view
   card.onclick = () => openWallpaperDetail(photo);
 
   gallery.appendChild(card);
 }
 
-// 10. Fetch Wallpapers API
+// 10. Fetch Wallpapers Unsplash API
 async function fetchWallpapers(query, page = 1) {
   if (isLoading || !hasMore || isFavoritesView) return;
   isLoading = true;
   if (loading) loading.style.display = 'block';
 
   try {
-    let apiUrl = `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&page=${page}&per_page=30`;
-    if (selectedOrientation) apiUrl += `&orientation=${selectedOrientation}`;
-    if (selectedColor) apiUrl += `&color=${selectedColor}`;
+    let apiUrl = '';
+    const orientationParam = selectedOrientation === 'square' ? 'squarish' : selectedOrientation;
 
-    const response = await fetch(apiUrl, {
-      headers: { Authorization: apiKey }
-    });
+    if (!query || query === '4k wallpaper') {
+      // General Editorial Feed
+      apiUrl = `https://api.unsplash.com/photos?page=${page}&per_page=30&client_id=${UNSPLASH_ACCESS_KEY}`;
+      if (selectedSort) apiUrl += `&order_by=${selectedSort === 'latest' ? 'latest' : 'popular'}`;
+    } else {
+      // Search Query Feed
+      apiUrl = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&page=${page}&per_page=30&client_id=${UNSPLASH_ACCESS_KEY}`;
+      if (orientationParam) apiUrl += `&orientation=${orientationParam}`;
+      if (selectedColor) apiUrl += `&color=${selectedColor}`;
+      if (selectedSort) apiUrl += `&order_by=${selectedSort === 'latest' ? 'latest' : 'relevant'}`;
+    }
 
-    if (!response.ok) throw new Error('API Key error.');
+    const response = await fetch(apiUrl);
+    if (!response.ok) throw new Error('Unsplash API Key Error.');
 
     const data = await response.json();
     if (loading) loading.style.display = 'none';
 
-    if (data.photos.length === 0 && page === 1) {
+    const rawPhotos = Array.isArray(data) ? data : (data.results || []);
+
+    if (rawPhotos.length === 0 && page === 1) {
       gallery.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No wallpapers found matching filters!</p>';
       isLoading = false;
       return;
     }
 
-    data.photos.forEach(photo => {
-      if (!loadedImageIds.has(photo.id)) {
+    rawPhotos.forEach(rawItem => {
+      const photo = formatUnsplashPhoto(rawItem);
+      if (photo && !loadedImageIds.has(photo.id)) {
         loadedImageIds.add(photo.id);
         renderCard(photo);
       }
@@ -350,8 +465,11 @@ async function fetchWallpapers(query, page = 1) {
 function applyFilters() {
   const orientationElem = document.getElementById('orientationFilter');
   const colorElem = document.getElementById('colorFilter');
+  const sortElem = document.getElementById('sortFilter');
+
   if (orientationElem) selectedOrientation = orientationElem.value;
   if (colorElem) selectedColor = colorElem.value;
+  if (sortElem) selectedSort = sortElem.value;
   
   resetGallery();
   fetchWallpapers(currentQuery, currentPage);
@@ -420,3 +538,93 @@ window.addEventListener('click', (e) => {
 
 // Initial Load
 fetchWallpapers(currentQuery, currentPage);
+
+// Download History Tracking Array
+let downloadHistory = JSON.parse(localStorage.getItem('download_history')) || [];
+
+// Overriding Download Function to Save History
+const originalDownloadImage = downloadImage;
+async function downloadImage(imgUrl, fileName) {
+  originalDownloadImage(imgUrl, fileName);
+
+  const exists = downloadHistory.some(item => item.url === imgUrl);
+  if (!exists) {
+    downloadHistory.unshift({ url: imgUrl, name: fileName, id: Date.now() });
+    if (downloadHistory.length > 30) downloadHistory.pop();
+    localStorage.setItem('download_history', JSON.stringify(downloadHistory));
+  }
+}
+
+// Show Download History Page
+function showDownloadHistory() {
+  isFavoritesView = true;
+  gallery.innerHTML = '';
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+
+  if (downloadHistory.length === 0) {
+    gallery.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px 0;">No download history yet! 📥</p>';
+    return;
+  }
+
+  downloadHistory.forEach(item => {
+    const card = document.createElement('div');
+    card.classList.add('card');
+    card.innerHTML = `
+      <img src="${item.url}" alt="${item.name}" loading="lazy" />
+      <div class="overlay">
+        <span class="photographer"><i class="fa-solid fa-download"></i> Downloaded</span>
+        <div class="action-btns">
+          <button class="icon-btn" onclick="downloadImage('${item.url}', '${item.name}')"><i class="fa-solid fa-download"></i></button>
+        </div>
+      </div>
+    `;
+    gallery.appendChild(card);
+  });
+}
+
+// Toggle Language Dropdown Popover
+function toggleLanguageDropdown(e) {
+  if (e) e.stopPropagation();
+  const dropdown = document.getElementById('langDropdown');
+  if (dropdown) {
+    dropdown.classList.toggle('show');
+  }
+}
+
+// Select Language & Update Checkmark (✓)
+function selectLanguage(langName, element) {
+  document.querySelectorAll('.lang-list li').forEach(li => {
+    li.classList.remove('active');
+    const check = li.querySelector('.check-icon');
+    if (check) check.innerText = '';
+  });
+
+  if (element) {
+    element.classList.add('active');
+    const check = element.querySelector('.check-icon');
+    if (check) check.innerText = '✓';
+  }
+
+  showToast(`Language set to ${langName}`);
+
+  const dropdown = document.getElementById('langDropdown');
+  if (dropdown) dropdown.classList.remove('show');
+}
+
+// Close language popover when clicking anywhere outside
+window.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('langDropdown');
+  if (dropdown && dropdown.classList.contains('show')) {
+    if (!dropdown.contains(e.target) && !e.target.closest('#sidebarLangBtn')) {
+      dropdown.classList.remove('show');
+    }
+  }
+});
+
+// About Us Modal Handlers
+function openAboutModal() {
+  document.getElementById('aboutModal').style.display = 'flex';
+}
+function closeAboutModal() {
+  document.getElementById('aboutModal').style.display = 'none';
+}

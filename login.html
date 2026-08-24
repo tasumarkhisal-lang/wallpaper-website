@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account - Wallpaper Hub</title>
+    <link rel="stylesheet" href="login-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="form-wrapper">
+        <!-- Toggle Buttons -->
+        <div class="toggle-box">
+            <button id="login-btn-tab" class="active" onclick="showLogin()">Log In</button>
+            <button id="signup-btn-tab" onclick="showSignup()">Sign Up</button>
+        </div>
+
+        <!-- 1. LOGIN FORM -->
+        <form id="login-form" class="auth-form active">
+            <h2>Welcome Back</h2>
+            <p class="subtitle">Log in to download HD wallpapers</p>
+
+            <div class="input-group">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" placeholder="Email Address" required>
+            </div>
+
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" placeholder="Password" required>
+            </div>
+
+            <button type="submit" class="submit-btn">Log In</button>
+        </form>
+
+        <!-- 2. SIGN UP FORM -->
+        <form id="signup-form" class="auth-form">
+            <h2>Create Account</h2>
+            <p class="subtitle">Sign up to get full access</p>
+
+            <div class="input-group">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" placeholder="Full Name" required>
+            </div>
+
+            <div class="input-group">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" placeholder="Email Address" required>
+            </div>
+
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" placeholder="Create Password" required>
+            </div>
+
+            <button type="submit" class="submit-btn">Sign Up</button>
+        </form>
+    </div>
+
+    <!-- Simple JavaScript for Tab Switching -->
+    <script>
+        function showLogin() {
+            document.getElementById('login-form').classList.add('active');
+            document.getElementById('signup-form').classList.remove('active');
+            document.getElementById('login-btn-tab').classList.add('active');
+            document.getElementById('signup-btn-tab').classList.remove('active');
+        }
+
+        function showSignup() {
+            document.getElementById('signup-form').classList.add('active');
+            document.getElementById('login-form').classList.remove('active');
+            document.getElementById('signup-btn-tab').classList.add('active');
+            document.getElementById('login-btn-tab').classList.remove('active');
+        }
+    </script>
+    
+    <script src="login.js"></script>
+</body>
+</html>
+</body>
+</html>   
