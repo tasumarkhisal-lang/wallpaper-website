@@ -72,7 +72,7 @@ body {
   transition: all 0.2s ease;
 }
 
-/* Blue Hover Effect */
+/* Blue Hover Effect for Sidebar Icons */
 .sidebar-icon:hover {
   background: rgba(59, 130, 246, 0.15);
   color: var(--accent-color);
@@ -119,6 +119,7 @@ body {
   gap: 15px;
 }
 
+/* Navbar Buttons Styling & Blue Hover */
 .nav-btn {
   background: var(--card-bg);
   color: var(--text-main);
@@ -127,6 +128,15 @@ body {
   border-radius: 20px;
   cursor: pointer;
   font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.nav-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background: rgba(59, 130, 246, 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 .login-btn-nav {
@@ -140,11 +150,14 @@ body {
   color: var(--text-main);
   text-decoration: none;
   font-size: 1.1rem;
-  transition: background 0.3s ease;
+  transition: all 0.25s ease;
 }
 
 .login-btn-nav:hover {
-  background: var(--accent-hover);
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 /* Hero Section */
