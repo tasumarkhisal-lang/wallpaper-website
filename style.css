@@ -527,3 +527,29 @@ body {
 .facebook { background: #1877F2; }
 .twitter { background: #000000; }
 .pinterest { background: #E60023; }
+/* Sidebar Active Navigation Highlight */
+.nav-icon.active {
+  color: #3b82f6 !important;
+  background-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+/* Empty View Messaging (Downloads / Bookmarks) */
+.empty-view-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.empty-view-state i {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  color: var(--accent-color);
+  opacity: 0.6;
+}
+
+.empty-view-state h3 {
+  font-size: 1.4rem;
+  color: var(--text-color);
+  margin-bottom: 6px;
+}

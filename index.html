@@ -18,22 +18,22 @@
 </head>
 <body>
 
-    <!-- Left Sidebar -->
-    <aside class="sidebar">
-        <div class="sidebar-top">
-            <a href="#" class="nav-icon active" title="Home"><i class="fa-solid fa-wand-magic-sparkles"></i></a>
-            <a href="#" class="nav-icon" title="Gallery"><i class="fa-regular fa-image"></i></a>
-            <a href="#" class="nav-icon" title="Videos"><i class="fa-regular fa-circle-play"></i></a>
-            <a href="#" class="nav-icon" title="Explore"><i class="fa-regular fa-compass"></i></a>
-            <a href="#" class="nav-icon" title="Downloads"><i class="fa-solid fa-download"></i></a>
-            <a href="#" class="nav-icon" title="Bookmarks"><i class="fa-regular fa-bookmark"></i></a>
-        </div>
-        <div class="sidebar-bottom">
-            <a href="login.html" class="nav-icon" title="Account"><i class="fa-regular fa-user"></i></a>
-            <a href="#" class="nav-icon" title="Language"><i class="fa-solid fa-language"></i></a>
-            <a href="#" class="nav-icon" title="Menu"><i class="fa-solid fa-bars"></i></a>
-        </div>
-    </aside>
+   <!-- Left Sidebar -->
+<aside class="sidebar">
+    <div class="sidebar-top">
+        <a href="#" class="nav-icon active" id="navHome" onclick="showHomeView(event)" title="Home"><i class="fa-solid fa-wand-magic-sparkles"></i></a>
+        <a href="#" class="nav-icon" id="navGallery" onclick="showGalleryView(event)" title="Gallery"><i class="fa-regular fa-image"></i></a>
+        <a href="#" class="nav-icon" id="navVideos" onclick="showVideosView(event)" title="Videos"><i class="fa-regular fa-circle-play"></i></a>
+        <a href="#" class="nav-icon" id="navExplore" onclick="showExploreView(event)" title="Explore"><i class="fa-regular fa-compass"></i></a>
+        <a href="#" class="nav-icon" id="navDownloads" onclick="showDownloadsView(event)" title="Downloads"><i class="fa-solid fa-download"></i></a>
+        <a href="#" class="nav-icon" id="navBookmarks" onclick="showBookmarksView(event)" title="Bookmarks"><i class="fa-regular fa-bookmark"></i></a>
+    </div>
+    <div class="sidebar-bottom">
+        <a href="login.html" class="nav-icon" id="navAccount" title="Account"><i class="fa-regular fa-user"></i></a>
+        <a href="#" class="nav-icon" id="navLanguage" onclick="toggleLanguage(event)" title="Language"><i class="fa-solid fa-language"></i></a>
+        <a href="#" class="nav-icon" id="navMenu" onclick="toggleSidebarMenu(event)" title="Menu"><i class="fa-solid fa-bars"></i></a>
+    </div>
+</aside>
 
     <!-- Main Wrapper -->
     <div class="main-wrapper">

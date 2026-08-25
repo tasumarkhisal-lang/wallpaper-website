@@ -426,3 +426,127 @@ window.addEventListener('click', (e) => {
 });
 
 fetchWallpapers(currentQuery, currentPage);
+// Sidebar Active Highlight Helper
+function setActiveNav(elementId) {
+  document.querySelectorAll('.sidebar .nav-icon').forEach(icon => icon.classList.remove('active'));
+  const activeElem = document.getElementById(elementId);
+  if (activeElem) activeElem.classList.add('active');
+}
+
+// 1. Magic Wand (Home View)
+function showHomeView(e) {
+  if (e) e.preventDefault();
+  setActiveNav('navHome');
+  isFavoritesView = false;
+  
+  const heroSection = document.querySelector('.hero-section');
+  if (heroSection) heroSection.style.display = 'block';
+  
+  resetGallery();
+  fetchWallpapers('nature', 1);
+}
+
+// 2. Gallery (Categories Grid)
+function showGalleryView(e) {
+  if (e) e.preventDefault();
+  setActiveNav('navGallery');
+  isFavoritesView = false;
+  
+  const heroSection = document.querySelector('.hero-section');
+  if (heroSection) heroSection.style.display = 'none';
+  
+  resetGallery();
+  fetchWallpapers('aesthetic', 1);
+}
+
+// 3. Videos (Live Wallpapers Placeholder)
+function showVideosView(e) {
+  if (e) e.preventDefault();
+  setActiveNav('navVideos');
+  isFavoritesView = true;
+
+  const heroSection = document.querySelector('.hero-section');
+  if (heroSection) heroSection.style.display = 'none';
+
+  gallery.innerHTML = `
+    <div class="empty-view-state">
+      <i class="fa-regular fa-circle-play"></i>
+      <h3>Live & Video Wallpapers</h3>
+      <p>Video wallpapers feature is coming soon to JennWall!</p>
+    </div>
+  `;
+}
+
+// 4. Explore (Random Category Wallpapers)
+function showExploreView(e) {
+  if (e) e.preventDefault();
+  setActiveNav('navExplore');
+  isFavoritesView = false;
+
+  const heroSection = document.querySelector('.hero-section');
+  if (heroSection) heroSection.style.display = 'none';
+
+  const randomTerms = ['space', 'neon', 'abstract', 'cyberpunk', 'architecture', 'minimalist'];
+  const randomQuery = randomTerms[Math.floor(Math.random() * randomTerms.length)];
+
+  resetGallery();
+  fetchWallpapers(randomQuery, 1);
+}
+
+// 5. Downloads History View
+function showDownloadsView(e) {
+  if (e) e.preventDefault();
+  setActiveNav('navDownloads');
+  isFavoritesView = true;
+
+  const heroSection = document.querySelector('.hero-section');
+  if (heroSection) heroSection.style.display = 'none';
+
+  gallery.innerHTML = '';
+
+  if (!downloadHistory || downloadHistory.length === 0) {
+    gallery.innerHTML = `
+      <div class="empty-view-state">
+        <i class="fa-solid fa-download"></i>
+        <h3>No Downloads Yet</h3>
+        <p>Wallpapers you download will appear here in your local history!</p>
+      </div>
+    `;
+    return;
+  }
+
+  downloadHistory.forEach(item => {
+    const photo = {
+      id: item.id || Date.now(),
+      src: { large: item.url, original: item.url, large2x: item.url },
+      photographer: item.name || 'Downloaded Image',
+      alt: item.name || 'Downloaded Wallpaper'
+    };
+    renderCard(photo);
+  });
+}
+
+// 6. Bookmarks (Favorites View)
+function showBookmarksView(e) {
+  if (e) e.preventDefault();
+  setActiveNav('navBookmarks');
+  isFavoritesView = true;
+
+  const heroSection = document.querySelector('.hero-section');
+  if (heroSection) heroSection.style.display = 'none';
+
+  gallery.innerHTML = '';
+
+  if (!favorites || favorites.length === 0) {
+    gallery.innerHTML = `
+      <div class="empty-view-state">
+        <i class="fa-regular fa-bookmark"></i>
+        <h3>No Bookmarks Saved</h3>
+        <p>Click the heart icon on any wallpaper to add it to your bookmarks collection!</p>
+      </div>
+    `;
+    return;
+  }
+
+  favorites.forEach(photo => renderCard(photo));
+}
