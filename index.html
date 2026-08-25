@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JennWall 4K Wallpaper | High Quality Wallpapers</title>
+    <title>Wallpaper Hub - Ultra HD Wallpapers</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,92 +18,112 @@
 </head>
 <body>
 
-    <!-- Header Navigation -->
-    <header class="navbar">
-        <div class="logo">
-            <i class="fa-solid fa-camera-retro"></i> Wallpaper Hub
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <a href="#" class="nav-icon active" title="Home"><i class="fa-solid fa-wand-magic-sparkles"></i></a>
+            <a href="#" class="nav-icon" title="Gallery"><i class="fa-regular fa-image"></i></a>
+            <a href="#" class="nav-icon" title="Videos"><i class="fa-regular fa-circle-play"></i></a>
+            <a href="#" class="nav-icon" title="Explore"><i class="fa-regular fa-compass"></i></a>
+            <a href="#" class="nav-icon" title="Downloads"><i class="fa-solid fa-download"></i></a>
+            <a href="#" class="nav-icon" title="Bookmarks"><i class="fa-regular fa-bookmark"></i></a>
         </div>
-        <div class="nav-actions">
-            <button class="nav-btn" onclick="showFavorites()" id="favCountBtn" title="Favorites">
-                <i class="fa-solid fa-heart"></i>
-            </button>
-            <button class="nav-btn" id="themeToggleBtn" title="Toggle Theme">
-                <i class="fa-solid fa-moon"></i>
-            </button>
-            <a href="#" class="login-btn-nav" onclick="openAboutModal()" title="About Us">
-                <i class="fa-regular fa-user"></i>
-            </a>
+        <div class="sidebar-bottom">
+            <a href="login.html" class="nav-icon" title="Account"><i class="fa-regular fa-user"></i></a>
+            <a href="#" class="nav-icon" title="Language"><i class="fa-solid fa-language"></i></a>
+            <a href="#" class="nav-icon" title="Menu"><i class="fa-solid fa-bars"></i></a>
         </div>
-    </header>
+    </aside>
 
-    <!-- Main Hero / Search Area -->
-    <section class="hero-section">
-        <h1>Discover High Quality 4K Wallpapers</h1>
-        <p>Explore thousands of stunning images for your desktop and mobile</p>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
         
-        <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" id="searchInput" placeholder="Search wallpapers (e.g., Nature, Dark, Anime)..." autocomplete="off">
-            <button id="searchBtn">Search</button>
-            <div id="recentSearches" class="recent-searches"></div>
-        </div>
+        <!-- Header Navigation -->
+        <header class="navbar">
+            <div class="logo">
+                <i class="fa-solid fa-wand-magic-sparkles logo-icon"></i>
+                <span class="logo-text">WallpaperHub</span>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-btn fav-badge-btn" onclick="showFavorites()" id="favCountBtn" title="Favorites">
+                    <i class="fa-solid fa-heart"></i> <span id="favCounter">(0)</span>
+                </button>
+                <button class="nav-btn" id="themeToggleBtn" title="Toggle Theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <a href="login.html" class="login-btn-nav" title="Login / Profile">
+                    <i class="fa-solid fa-user"></i>
+                </a>
+            </div>
+        </header>
 
-        <!-- Categories / Chips -->
-        <div class="categories">
-            <button class="chip active" onclick="filterCategory('4k wallpaper')">All</button>
-            <button class="chip" onclick="filterCategory('Nature')">Nature</button>
-            <button class="chip" onclick="filterCategory('Anime')">Anime</button>
-            <button class="chip" onclick="filterCategory('Cars')">Cars</button>
-            <button class="chip" onclick="filterCategory('Abstract')">Abstract</button>
-            <button class="chip" onclick="filterCategory('Dark')">Dark</button>
-            <button class="chip" onclick="filterCategory('Technology')">Tech</button>
-        </div>
-    </section>
+        <!-- Main Hero Section -->
+        <section class="hero-section">
+            <h1 class="hero-title">JennWall 4K Wallpaper</h1>
+            <p class="hero-subtitle">Download ultra HD 4K wallpapers for your desktop & phone</p>
+            
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Search here..." autocomplete="off">
+                <button id="searchBtn">Search</button>
+                <div id="recentSearches" class="recent-searches"></div>
+            </div>
 
-    <!-- Filters Bar -->
-    <div class="filter-bar">
-        <div class="filter-group">
-            <label for="orientationFilter"><i class="fa-solid fa-crop-simple"></i> Orientation:</label>
-            <select id="orientationFilter" onchange="applyFilters()">
-                <option value="">All</option>
-                <option value="landscape">Landscape</option>
-                <option value="portrait">Portrait</option>
-                <option value="square">Square</option>
-            </select>
-        </div>
+            <!-- Category Pills -->
+            <div class="categories">
+                <button class="chip active" onclick="filterCategory('4k wallpaper')">All</button>
+                <button class="chip" onclick="filterCategory('Nature')">Nature</button>
+                <button class="chip" onclick="filterCategory('Anime')">Anime</button>
+                <button class="chip" onclick="filterCategory('Cars')">Cars</button>
+                <button class="chip" onclick="filterCategory('Aesthetic')">Aesthetic</button>
+                <button class="chip" onclick="filterCategory('Dark')">Dark</button>
+            </div>
 
-        <div class="filter-group">
-            <label for="colorFilter"><i class="fa-solid fa-palette"></i> Color:</label>
-            <select id="colorFilter" onchange="applyFilters()">
-                <option value="">All Colors</option>
-                <option value="black_and_white">Black & White</option>
-                <option value="blue">Blue</option>
-                <option value="red">Red</option>
-                <option value="green">Green</option>
-                <option value="yellow">Yellow</option>
-                <option value="purple">Purple</option>
-            </select>
-        </div>
+            <!-- Filters Bar -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label for="orientationFilter"><i class="fa-solid fa-crop-simple"></i> Orientation:</label>
+                    <select id="orientationFilter" onchange="applyFilters()">
+                        <option value="">All Types</option>
+                        <option value="landscape">Landscape</option>
+                        <option value="portrait">Portrait</option>
+                        <option value="square">Square</option>
+                    </select>
+                </div>
 
-        <div class="filter-group">
-            <label for="sortFilter"><i class="fa-solid fa-arrow-down-wide-short"></i> Sort By:</label>
-            <select id="sortFilter" onchange="applyFilters()">
-                <option value="relevant">Relevance</option>
-                <option value="latest">Latest</option>
-            </select>
-        </div>
+                <div class="filter-group">
+                    <label for="colorFilter"><i class="fa-solid fa-palette"></i> Color:</label>
+                    <select id="colorFilter" onchange="applyFilters()">
+                        <option value="">All Colors</option>
+                        <option value="black_and_white">Black & White</option>
+                        <option value="blue">Blue</option>
+                        <option value="red">Red</option>
+                        <option value="green">Green</option>
+                        <option value="yellow">Yellow</option>
+                        <option value="purple">Purple</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="sortFilter"><i class="fa-solid fa-arrow-down-wide-short"></i> Sort By:</label>
+                    <select id="sortFilter" onchange="applyFilters()">
+                        <option value="relevant">Relevant</option>
+                        <option value="latest">Latest</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Grid -->
+        <main class="gallery-container">
+            <div id="wallpaperGallery" class="gallery"></div>
+            
+            <div id="loading" class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Loading wallpapers...</p>
+            </div>
+        </main>
     </div>
-
-    <!-- Gallery Container -->
-    <main class="gallery-container">
-        <div id="wallpaperGallery" class="gallery"></div>
-        
-        <!-- Loading Indicator -->
-        <div id="loading" class="loading-spinner">
-            <div class="spinner"></div>
-            <p>Loading wallpapers...</p>
-        </div>
-    </main>
 
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
@@ -146,18 +166,6 @@
         </div>
     </div>
 
-    <!-- About Us Modal -->
-    <div id="aboutModal" class="modal">
-        <div class="modal-card">
-            <span class="close-modal" onclick="closeAboutModal()">&times;</span>
-            <h2>About JennWall 4K</h2>
-            <p style="margin-top: 10px; font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
-                Welcome to JennWall 4K Wallpaper (Wallpaper Hub)! We offer high-resolution wallpapers sourced from talented creators worldwide. Search, organize favorites, filter by color and orientation, and download seamlessly.
-            </p>
-        </div>
-    </div>
-
-    <!-- Script File -->
     <script src="script.js"></script>
 </body>
 </html>

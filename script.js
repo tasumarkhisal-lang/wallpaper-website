@@ -6,6 +6,7 @@ const gallery = document.getElementById('wallpaperGallery');
 const loading = document.getElementById('loading');
 const themeToggleBtn = document.getElementById('themeToggleBtn');
 const recentSearchesContainer = document.getElementById('recentSearches');
+const favCounter = document.getElementById('favCounter');
 
 let currentQuery = '4k wallpaper';
 let currentPage = 1;
@@ -13,7 +14,6 @@ let isLoading = false;
 let hasMore = true;
 let isFavoritesView = false;
 
-// Filter Variables
 let selectedOrientation = '';
 let selectedColor = '';
 let selectedSort = 'relevant';
@@ -24,7 +24,6 @@ let favorites = JSON.parse(localStorage.getItem('fav_wallpapers')) || [];
 let recentSearches = JSON.parse(localStorage.getItem('recent_searches')) || [];
 let downloadHistory = JSON.parse(localStorage.getItem('download_history')) || [];
 
-// Helper: Format Unsplash Response
 function formatUnsplashPhoto(item) {
   if (!item) return null;
   if (item.src && item.photographer !== undefined) return item;
@@ -42,10 +41,8 @@ function formatUnsplashPhoto(item) {
   };
 }
 
-// Ensure Fav Button Heart Icon
 updateFavCount();
 
-// Theme Toggle Logic
 if (themeToggleBtn) {
   themeToggleBtn.addEventListener('click', () => {
     document.body.classList.toggle('light-mode');
@@ -54,7 +51,6 @@ if (themeToggleBtn) {
   });
 }
 
-// Toast Notification
 function showToast(message) {
   const toast = document.getElementById('toast');
   if (!toast) return;
@@ -63,21 +59,16 @@ function showToast(message) {
   setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
 }
 
-// Favorites Icon Ensure
 function updateFavCount() {
-  const favBtn = document.getElementById('favCountBtn');
-  if (favBtn) {
-    favBtn.innerHTML = '<i class="fa-solid fa-heart"></i>';
+  if (favCounter) {
+    favCounter.innerText = `(${favorites.length})`;
   }
 }
 
-// Direct Image Download
 async function downloadImage(imgUrl, fileName) {
   showToast("Downloading started...");
-
   const cleanFileName = fileName ? fileName.replace(/[^a-zA-Z0-9_-]/g, "_") : "wallpaper";
 
-  // Record Download History
   const exists = downloadHistory.some(item => item.url === imgUrl);
   if (!exists) {
     downloadHistory.unshift({ url: imgUrl, name: cleanFileName, id: Date.now() });
@@ -105,7 +96,6 @@ async function downloadImage(imgUrl, fileName) {
   }
 }
 
-// Favorites Toggle
 function toggleFavorite(photo) {
   const index = favorites.findIndex(item => item.id === photo.id);
   if (index === -1) {
@@ -134,7 +124,6 @@ function toggleFavorite(photo) {
   }
 }
 
-// Show Favorites Page
 function showFavorites() {
   isFavoritesView = true;
   gallery.innerHTML = '';
@@ -148,7 +137,6 @@ function showFavorites() {
   favorites.forEach(photo => renderCard(photo));
 }
 
-// Social Share Modal Functions
 function openShareModal(imgUrl) {
   currentShareUrl = imgUrl;
   const shareModal = document.getElementById('shareModal');
@@ -184,7 +172,6 @@ function shareToSocial(platform) {
   window.open(shareUrl, '_blank');
 }
 
-// Recent Searches Management
 function saveRecentSearch(query) {
   if (!query) return;
   recentSearches = recentSearches.filter(q => q.toLowerCase() !== query.toLowerCase());
@@ -226,7 +213,6 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Detail Modal
 function openWallpaperDetail(photo) {
   const modal = document.getElementById('wallpaperDetailModal');
   const mainImg = document.getElementById('detailMainImage');
@@ -301,7 +287,6 @@ async function loadRelatedWallpapers(queryKeyword) {
   }
 }
 
-// Render Card
 function renderCard(photo) {
   const card = document.createElement('div');
   card.classList.add('card');
@@ -331,7 +316,6 @@ function renderCard(photo) {
   gallery.appendChild(card);
 }
 
-// Fetch Wallpapers API
 async function fetchWallpapers(query, page = 1) {
   if (isLoading || !hasMore || isFavoritesView) return;
   isLoading = true;
@@ -380,7 +364,6 @@ async function fetchWallpapers(query, page = 1) {
   }
 }
 
-// Apply Filters
 function applyFilters() {
   const orientationElem = document.getElementById('orientationFilter');
   const colorElem = document.getElementById('colorFilter');
@@ -394,7 +377,6 @@ function applyFilters() {
   fetchWallpapers(currentQuery, currentPage);
 }
 
-// Reset Gallery Data
 function resetGallery() {
   isFavoritesView = false;
   currentPage = 1;
@@ -422,18 +404,6 @@ function filterCategory(categoryName) {
   fetchWallpapers(currentQuery, currentPage);
 }
 
-// Modal Handlers
-function openAboutModal() {
-  const modal = document.getElementById('aboutModal');
-  if (modal) modal.style.display = 'block';
-}
-
-function closeAboutModal() {
-  const modal = document.getElementById('aboutModal');
-  if (modal) modal.style.display = 'none';
-}
-
-// Listeners
 if (searchBtn) searchBtn.addEventListener('click', handleSearch);
 if (searchInput) searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
 
@@ -450,12 +420,9 @@ window.addEventListener('scroll', () => {
 window.addEventListener('click', (e) => {
   const shareModal = document.getElementById('shareModal');
   const detailModal = document.getElementById('wallpaperDetailModal');
-  const aboutModal = document.getElementById('aboutModal');
 
   if (e.target === shareModal) closeShareModal();
   if (e.target === detailModal) closeWallpaperDetail();
-  if (e.target === aboutModal) closeAboutModal();
 });
 
-// Initial Load
 fetchWallpapers(currentQuery, currentPage);
