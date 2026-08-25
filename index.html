@@ -1,215 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coding Hub Wallpapers</title>
-  
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JennWall 4K Wallpaper | High Quality Wallpapers</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Unsplash Style Left Vertical Icon Sidebar -->
-  <aside class="left-icon-sidebar">
-    <div class="sidebar-top-icons">
-      <div class="sidebar-icon logo-icon" title="Coding Hub Wallpapers">
-        <i class="fa-solid fa-layer-group"></i>
-      </div>
-      <button class="sidebar-icon" onclick="resetGallery(); fetchWallpapers('4k wallpaper', 1);" title="Home">
-        <i class="fa-solid fa-house"></i>
-      </button>
-      <button class="sidebar-icon" onclick="showFavorites();" title="Favorites">
-        <i class="fa-solid fa-heart"></i>
-      </button>
-      <button class="sidebar-icon" onclick="showDownloadHistory();" title="Download History">
-        <i class="fa-solid fa-clock-rotate-left"></i>
-      </button>
-    </div>
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-camera-retro"></i> Wallpaper Hub
+        </div>
+        <div class="nav-actions">
+            <button class="nav-btn" onclick="showFavorites()" id="favCountBtn" title="Favorites">
+                <i class="fa-solid fa-heart"></i>
+            </button>
+            <button class="nav-btn" id="themeToggleBtn" title="Toggle Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <a href="#" class="login-btn-nav" onclick="openAboutModal()" title="About Us">
+                <i class="fa-regular fa-user"></i>
+            </a>
+        </div>
+    </header>
 
-    <div class="sidebar-bottom-icons">
-      <div class="sidebar-divider"></div>
-      <button class="sidebar-icon" id="sidebarLangBtn" onclick="toggleLanguageDropdown(event)" title="Language">
-        <i class="fa-solid fa-globe"></i>
-      </button>
-      <button class="sidebar-icon" onclick="openAboutModal()" title="About Us">
-        <i class="fa-solid fa-circle-info"></i>
-      </button>
-    </div>
-  </aside>
+    <!-- Main Hero / Search Area -->
+    <section class="hero-section">
+        <h1>Discover High Quality 4K Wallpapers</h1>
+        <p>Explore thousands of stunning images for your desktop and mobile</p>
+        
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search wallpapers (e.g., Nature, Dark, Anime)..." autocomplete="off">
+            <button id="searchBtn">Search</button>
+            <div id="recentSearches" class="recent-searches"></div>
+        </div>
 
-  <!-- Language Popover Dropdown -->
-  <div class="lang-popover" id="langDropdown">
-    <div class="lang-popover-header">Language</div>
-    <ul class="lang-list">
-      <li class="active" onclick="selectLanguage('English', this)">
-        <span class="check-icon">✓</span> English
-      </li>
-      <li onclick="selectLanguage('Urdu', this)">
-        <span class="check-icon"></span> Urdu
-      </li>
-      <li onclick="selectLanguage('Hindi', this)">
-        <span class="check-icon"></span> Hindi
-      </li>
-      <li onclick="selectLanguage('Spanish', this)">
-        <span class="check-icon"></span> Spanish
-      </li>
-    </ul>
-  </div>
-
-  <!-- Main Navigation Bar -->
-<header class="navbar">
-  <div class="logo">
-    <i class="fa-solid fa-camera-retro"></i> Wallpaper Hub
-  </div>
-  <div class="nav-actions">
-    <button class="nav-btn" onclick="showFavorites()" id="favCountBtn" title="Favorites">
-      <i class="fa-solid fa-heart"></i>
-    </button>
-    <button class="nav-btn" id="themeToggleBtn" title="Toggle Theme">
-      <i class="fa-solid fa-moon"></i>
-    </button>
-    <a href="#" class="login-btn-nav" title="User Profile">
-      <i class="fa-regular fa-user"></i>
-    </a>
-  </div>
-</header>
-
-  <!-- Hero Section -->
-  <section class="hero">
-    <h1>Stunning Ultra HD Wallpapers</h1>
-    <p>Discover high-resolution imagery curated for your devices</p>
-    
-    <!-- Search Area -->
-    <div class="search-box">
-      <i class="fa-solid fa-magnifying-glass search-icon"></i>
-      <input type="text" id="searchInput" placeholder="Search high-res wallpapers..." autocomplete="off">
-      <button id="searchBtn">Search</button>
-      <div class="recent-searches" id="recentSearches"></div>
-    </div>
-
-    <!-- Category Chips -->
-    <div class="categories">
-      <button class="chip active" onclick="filterCategory('4k wallpaper')">All</button>
-      <button class="chip" onclick="filterCategory('Nature')">Nature</button>
-      <button class="chip" onclick="filterCategory('Minimal')">Minimal</button>
-      <button class="chip" onclick="filterCategory('Anime')">Anime</button>
-      <button class="chip" onclick="filterCategory('Cyberpunk')">Cyberpunk</button>
-      <button class="chip" onclick="filterCategory('Cars')">Cars</button>
-      <button class="chip" onclick="filterCategory('Dark Aesthetic')">Dark</button>
-    </div>
+        <!-- Categories / Chips -->
+        <div class="categories">
+            <button class="chip active" onclick="filterCategory('4k wallpaper')">All</button>
+            <button class="chip" onclick="filterCategory('Nature')">Nature</button>
+            <button class="chip" onclick="filterCategory('Anime')">Anime</button>
+            <button class="chip" onclick="filterCategory('Cars')">Cars</button>
+            <button class="chip" onclick="filterCategory('Abstract')">Abstract</button>
+            <button class="chip" onclick="filterCategory('Dark')">Dark</button>
+            <button class="chip" onclick="filterCategory('Technology')">Tech</button>
+        </div>
+    </section>
 
     <!-- Filters Bar -->
-    <div class="filters-row">
-      <div class="filter-group">
-        <label for="orientationFilter"><i class="fa-solid fa-crop-simple"></i> Orientation:</label>
-        <select id="orientationFilter" onchange="applyFilters()">
-          <option value="">All</option>
-          <option value="landscape">Landscape</option>
-          <option value="portrait">Portrait</option>
-          <option value="square">Square</option>
-        </select>
-      </div>
+    <div class="filter-bar">
+        <div class="filter-group">
+            <label for="orientationFilter"><i class="fa-solid fa-crop-simple"></i> Orientation:</label>
+            <select id="orientationFilter" onchange="applyFilters()">
+                <option value="">All</option>
+                <option value="landscape">Landscape</option>
+                <option value="portrait">Portrait</option>
+                <option value="square">Square</option>
+            </select>
+        </div>
 
-      <div class="filter-group">
-        <label for="colorFilter"><i class="fa-solid fa-palette"></i> Color:</label>
-        <select id="colorFilter" onchange="applyFilters()">
-          <option value="">All Colors</option>
-          <option value="black_and_white">B & W</option>
-          <option value="black">Black</option>
-          <option value="blue">Blue</option>
-          <option value="green">Green</option>
-          <option value="red">Red</option>
-          <option value="yellow">Yellow</option>
-        </select>
-      </div>
+        <div class="filter-group">
+            <label for="colorFilter"><i class="fa-solid fa-palette"></i> Color:</label>
+            <select id="colorFilter" onchange="applyFilters()">
+                <option value="">All Colors</option>
+                <option value="black_and_white">Black & White</option>
+                <option value="blue">Blue</option>
+                <option value="red">Red</option>
+                <option value="green">Green</option>
+                <option value="yellow">Yellow</option>
+                <option value="purple">Purple</option>
+            </select>
+        </div>
 
-      <div class="filter-group">
-        <label for="sortFilter"><i class="fa-solid fa-arrow-down-short-wide"></i> Sort By:</label>
-        <select id="sortFilter" onchange="applyFilters()">
-          <option value="relevant">Relevance</option>
-          <option value="latest">Latest</option>
-        </select>
-      </div>
+        <div class="filter-group">
+            <label for="sortFilter"><i class="fa-solid fa-arrow-down-wide-short"></i> Sort By:</label>
+            <select id="sortFilter" onchange="applyFilters()">
+                <option value="relevant">Relevance</option>
+                <option value="latest">Latest</option>
+            </select>
+        </div>
     </div>
-  </section>
 
-  <!-- Wallpapers Grid Container -->
-  <main class="container">
-    <div class="gallery" id="wallpaperGallery"></div>
-    <div class="spinner" id="loading"></div>
-  </main>
+    <!-- Gallery Container -->
+    <main class="gallery-container">
+        <div id="wallpaperGallery" class="gallery"></div>
+        
+        <!-- Loading Indicator -->
+        <div id="loading" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading wallpapers...</p>
+        </div>
+    </main>
 
-  <!-- Toast Notification Bar -->
-  <div id="toast" class="toast"></div>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
 
-  <!-- Social Share Modal -->
-  <div id="shareModal" class="custom-modal">
-    <div class="share-modal-content">
-      <button class="close-share-btn" onclick="closeShareModal()">&times;</button>
-      <h3>Share Wallpaper</h3>
-      <div class="share-buttons">
-        <button class="share-btn whatsapp" onclick="shareToSocial('whatsapp')">
-          <i class="fa-brands fa-whatsapp"></i> WhatsApp
-        </button>
-        <button class="share-btn facebook" onclick="shareToSocial('facebook')">
-          <i class="fa-brands fa-facebook-f"></i> Facebook
-        </button>
-        <button class="share-btn twitter" onclick="shareToSocial('twitter')">
-          <i class="fa-brands fa-x-twitter"></i> Twitter
-        </button>
-        <button class="share-btn pinterest" onclick="shareToSocial('pinterest')">
-          <i class="fa-brands fa-pinterest-p"></i> Pinterest
-        </button>
-      </div>
-      <div class="copy-link-box">
-        <input type="text" id="shareLinkInput" readonly>
-        <button onclick="copyShareLink()">Copy</button>
-      </div>
+    <!-- Wallpaper Detail Modal -->
+    <div id="wallpaperDetailModal" class="modal">
+        <div class="wallpaper-modal-content">
+            <span class="close-modal" onclick="closeWallpaperDetail()">&times;</span>
+            <div class="modal-image-wrapper">
+                <img id="detailMainImage" src="" alt="Wallpaper Detail">
+            </div>
+            <div class="modal-actions">
+                <button id="detailDownloadBtn" class="btn btn-primary"><i class="fa-solid fa-download"></i> Download Original</button>
+                <button id="detailFavBtn" class="btn btn-secondary"><i class="fa-regular fa-heart"></i> Favorite</button>
+                <button id="detailShareBtn" class="btn btn-secondary"><i class="fa-solid fa-share-nodes"></i> Share</button>
+            </div>
+            <div class="related-section">
+                <h3>Related Wallpapers</h3>
+                <div id="relatedGrid" class="related-grid"></div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- Full Image Detail & Related Wallpapers Modal -->
-  <div id="wallpaperDetailModal" class="wallpaper-modal">
-    <div class="wallpaper-modal-content">
-      <button class="close-detail-btn" onclick="closeWallpaperDetail()">&times;</button>
-      
-      <div class="full-image-container">
-        <img id="detailMainImage" src="" alt="Wallpaper Preview">
-      </div>
-      
-      <div class="detail-actions">
-        <button class="action-btn" id="detailDownloadBtn">
-          <i class="fa-solid fa-download"></i> Download HD
-        </button>
-        <button class="action-btn" id="detailFavBtn">
-          <i class="fa-regular fa-heart"></i> Favorite
-        </button>
-        <button class="action-btn" id="detailShareBtn">
-          <i class="fa-solid fa-share-nodes"></i> Share
-        </button>
-      </div>
-
-      <div class="related-section">
-        <h3>Related Wallpapers</h3>
-        <div class="related-grid" id="relatedGrid"></div>
-      </div>
+    <!-- Share Modal -->
+    <div id="shareModal" class="modal">
+        <div class="modal-card">
+            <span class="close-modal" onclick="closeShareModal()">&times;</span>
+            <h3>Share Wallpaper</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 12px; color: var(--text-muted);">Copy the link or share directly to social media:</p>
+            <div class="share-input-group">
+                <input type="text" id="shareLinkInput" readonly>
+                <button onclick="copyShareLink()">Copy</button>
+            </div>
+            <div class="social-share-btns">
+                <button onclick="shareToSocial('whatsapp')" class="social-btn whatsapp"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+                <button onclick="shareToSocial('facebook')" class="social-btn facebook"><i class="fa-brands fa-facebook"></i> Facebook</button>
+                <button onclick="shareToSocial('twitter')" class="social-btn twitter"><i class="fa-brands fa-x-twitter"></i> X / Twitter</button>
+                <button onclick="shareToSocial('pinterest')" class="social-btn pinterest"><i class="fa-brands fa-pinterest"></i> Pinterest</button>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- About Us Modal -->
-  <div id="aboutModal" class="custom-modal">
-    <div class="custom-modal-content">
-      <span class="modal-close-btn" onclick="closeAboutModal()">&times;</span>
-      <h2>About Coding Hub</h2>
-      <p style="margin-top: 12px; font-size: 0.95rem; line-height: 1.5; color: var(--text-muted);">
-        Welcome to Coding Hub Wallpapers! We provide thousands of high-quality HD and 4K wallpapers completely free, powered by the Unsplash API.
-      </p>
+    <!-- About Us Modal -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-card">
+            <span class="close-modal" onclick="closeAboutModal()">&times;</span>
+            <h2>About JennWall 4K</h2>
+            <p style="margin-top: 10px; font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+                Welcome to JennWall 4K Wallpaper (Wallpaper Hub)! We offer high-resolution wallpapers sourced from talented creators worldwide. Search, organize favorites, filter by color and orientation, and download seamlessly.
+            </p>
+        </div>
     </div>
-  </div>
 
-  <!-- External Script -->
-  <script src="script.js"></script>
+    <!-- Script File -->
+    <script src="script.js"></script>
 </body>
 </html>

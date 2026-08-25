@@ -42,7 +42,7 @@ function formatUnsplashPhoto(item) {
   };
 }
 
-// Page Load: Ensure Fav Button Heart Icon
+// Ensure Fav Button Heart Icon
 updateFavCount();
 
 // Theme Toggle Logic
@@ -63,7 +63,7 @@ function showToast(message) {
   setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
 }
 
-// Favorites Counter Updater (Numbering Removed)
+// Favorites Icon Ensure
 function updateFavCount() {
   const favBtn = document.getElementById('favCountBtn');
   if (favBtn) {
@@ -71,7 +71,7 @@ function updateFavCount() {
   }
 }
 
-// Direct Image Download (Supports CORS & Fallbacks)
+// Direct Image Download
 async function downloadImage(imgUrl, fileName) {
   showToast("Downloading started...");
 
@@ -101,36 +101,7 @@ async function downloadImage(imgUrl, fileName) {
     setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
     showToast("Downloaded to device! 📁");
   } catch (error) {
-    // Fallback using Canvas
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = imgUrl + (imgUrl.includes('?') ? '&' : '?') + 'cors_bypass=' + Date.now();
-
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0);
-
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const blobUrl = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = blobUrl;
-          a.download = `${cleanFileName}.jpg`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
-          showToast("Downloaded to device! 📁");
-        }
-      }, "image/jpeg", 0.95);
-    };
-
-    img.onerror = () => {
-      window.open(imgUrl, '_blank');
-    };
+    window.open(imgUrl, '_blank');
   }
 }
 
@@ -255,14 +226,13 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Wallpaper Detail Modal & Related Images
+// Detail Modal
 function openWallpaperDetail(photo) {
   const modal = document.getElementById('wallpaperDetailModal');
   const mainImg = document.getElementById('detailMainImage');
   const downloadBtn = document.getElementById('detailDownloadBtn');
   const shareBtn = document.getElementById('detailShareBtn');
   const detailFavBtn = document.getElementById('detailFavBtn');
-  const modalContent = document.querySelector('.wallpaper-modal-content');
 
   if (!modal || !mainImg) return;
 
@@ -293,30 +263,22 @@ function openWallpaperDetail(photo) {
     };
   }
 
-  modal.classList.add('show');
   modal.style.display = 'block';
-
-  if (modalContent) modalContent.scrollTop = 0;
-  modal.scrollTop = 0;
-
   loadRelatedWallpapers(photo.alt || currentQuery);
 }
 
 function closeWallpaperDetail() {
   const modal = document.getElementById('wallpaperDetailModal');
-  if (modal) {
-    modal.classList.remove('show');
-    modal.style.display = 'none';
-  }
+  if (modal) modal.style.display = 'none';
 }
 
 async function loadRelatedWallpapers(queryKeyword) {
   const relatedGrid = document.getElementById('relatedGrid');
   if (!relatedGrid) return;
-  relatedGrid.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); text-align: center; grid-column: 1/-1;">Loading related wallpapers...</p>';
+  relatedGrid.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); grid-column: 1/-1;">Loading related...</p>';
 
   try {
-    const apiUrl = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(queryKeyword)}&per_page=12&client_id=${UNSPLASH_ACCESS_KEY}`;
+    const apiUrl = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(queryKeyword)}&per_page=6&client_id=${UNSPLASH_ACCESS_KEY}`;
     const response = await fetch(apiUrl);
     const data = await response.json();
 
@@ -327,19 +289,19 @@ async function loadRelatedWallpapers(queryKeyword) {
         const relPhoto = formatUnsplashPhoto(rawItem);
         const img = document.createElement('img');
         img.src = relPhoto.src.medium;
-        img.alt = relPhoto.alt || 'Related Wallpaper';
+        img.alt = relPhoto.alt || 'Related';
         img.onclick = () => openWallpaperDetail(relPhoto);
         relatedGrid.appendChild(img);
       });
     } else {
-      relatedGrid.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); grid-column: 1/-1; text-align: center;">No related wallpapers found.</p>';
+      relatedGrid.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); grid-column: 1/-1;">No related wallpapers found.</p>';
     }
   } catch (error) {
     relatedGrid.innerHTML = '';
   }
 }
 
-// Render Individual Wallpaper Cards
+// Render Card
 function renderCard(photo) {
   const card = document.createElement('div');
   card.classList.add('card');
@@ -347,61 +309,25 @@ function renderCard(photo) {
   const isFav = favorites.some(item => item.id === photo.id);
   const titleName = photo.alt ? photo.alt.replace(/[^a-zA-Z0-9]/g, "_") : `wallpaper_${photo.id}`;
 
-  const imgElem = document.createElement('img');
-  imgElem.src = photo.src.large;
-  imgElem.alt = photo.alt || 'Wallpaper';
-  imgElem.loading = 'lazy';
-
-  const overlay = document.createElement('div');
-  overlay.className = 'overlay';
-
-  const photographerSpan = document.createElement('span');
-  photographerSpan.className = 'photographer';
-  photographerSpan.innerHTML = `<i class="fa-regular fa-user"></i> ${photo.photographer}`;
-
-  const actionBtns = document.createElement('div');
-  actionBtns.className = 'action-btns';
-
-  const shareBtn = document.createElement('button');
-  shareBtn.className = 'icon-btn';
-  shareBtn.title = 'Share';
-  shareBtn.innerHTML = '<i class="fa-solid fa-share-nodes"></i>';
-  shareBtn.onclick = (e) => {
-    e.stopPropagation();
-    openShareModal(photo.src.original);
-  };
-
-  const favBtn = document.createElement('button');
-  favBtn.id = `fav-btn-${photo.id}`;
-  favBtn.className = `icon-btn ${isFav ? 'liked' : ''}`;
-  favBtn.title = 'Favorite';
-  favBtn.innerHTML = '<i class="fa-solid fa-heart"></i>';
-  favBtn.onclick = (e) => {
-    e.stopPropagation();
-    toggleFavorite(photo);
-  };
-
-  const downloadBtn = document.createElement('button');
-  downloadBtn.className = 'icon-btn';
-  downloadBtn.title = 'Download';
-  downloadBtn.innerHTML = '<i class="fa-solid fa-download"></i>';
-  downloadBtn.onclick = (e) => {
-    e.stopPropagation();
-    downloadImage(photo.src.original, titleName);
-  };
-
-  actionBtns.appendChild(shareBtn);
-  actionBtns.appendChild(favBtn);
-  actionBtns.appendChild(downloadBtn);
-
-  overlay.appendChild(photographerSpan);
-  overlay.appendChild(actionBtns);
-
-  card.appendChild(imgElem);
-  card.appendChild(overlay);
+  card.innerHTML = `
+    <img src="${photo.src.large}" alt="${photo.alt || 'Wallpaper'}" loading="lazy" />
+    <div class="overlay">
+      <span class="photographer"><i class="fa-regular fa-user"></i> ${photo.photographer}</span>
+      <div class="action-btns">
+        <button class="icon-btn" title="Share" onclick="event.stopPropagation(); openShareModal('${photo.src.original}')">
+          <i class="fa-solid fa-share-nodes"></i>
+        </button>
+        <button id="fav-btn-${photo.id}" class="icon-btn ${isFav ? 'liked' : ''}" title="Favorite" onclick="event.stopPropagation(); toggleFavorite(${JSON.stringify(photo).replace(/"/g, '&quot;')})">
+          <i class="fa-solid fa-heart"></i>
+        </button>
+        <button class="icon-btn" title="Download" onclick="event.stopPropagation(); downloadImage('${photo.src.original}', '${titleName}')">
+          <i class="fa-solid fa-download"></i>
+        </button>
+      </div>
+    </div>
+  `;
 
   card.onclick = () => openWallpaperDetail(photo);
-
   gallery.appendChild(card);
 }
 
@@ -426,7 +352,7 @@ async function fetchWallpapers(query, page = 1) {
     }
 
     const response = await fetch(apiUrl);
-    if (!response.ok) throw new Error('Unsplash API Key Error.');
+    if (!response.ok) throw new Error('API Error');
 
     const data = await response.json();
     if (loading) loading.style.display = 'none';
@@ -454,7 +380,7 @@ async function fetchWallpapers(query, page = 1) {
   }
 }
 
-// Apply Selected Filters
+// Apply Filters
 function applyFilters() {
   const orientationElem = document.getElementById('orientationFilter');
   const colorElem = document.getElementById('colorFilter');
@@ -496,66 +422,10 @@ function filterCategory(categoryName) {
   fetchWallpapers(currentQuery, currentPage);
 }
 
-// Show Download History Page
-function showDownloadHistory() {
-  isFavoritesView = true;
-  gallery.innerHTML = '';
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-
-  if (downloadHistory.length === 0) {
-    gallery.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px 0;">No download history yet! 📥</p>';
-    return;
-  }
-
-  downloadHistory.forEach(item => {
-    const card = document.createElement('div');
-    card.classList.add('card');
-    card.innerHTML = `
-      <img src="${item.url}" alt="${item.name}" loading="lazy" />
-      <div class="overlay">
-        <span class="photographer"><i class="fa-solid fa-download"></i> Downloaded</span>
-        <div class="action-btns">
-          <button class="icon-btn" onclick="downloadImage('${item.url}', '${item.name}')"><i class="fa-solid fa-download"></i></button>
-        </div>
-      </div>
-    `;
-    gallery.appendChild(card);
-  });
-}
-
-// Toggle Language Popover Dropdown
-function toggleLanguageDropdown(e) {
-  if (e) e.stopPropagation();
-  const dropdown = document.getElementById('langDropdown');
-  if (dropdown) {
-    dropdown.classList.toggle('show');
-  }
-}
-
-// Select Language
-function selectLanguage(langName, element) {
-  document.querySelectorAll('.lang-list li').forEach(li => {
-    li.classList.remove('active');
-    const check = li.querySelector('.check-icon');
-    if (check) check.innerText = '';
-  });
-
-  if (element) {
-    element.classList.add('active');
-    const check = element.querySelector('.check-icon');
-    if (check) check.innerText = '✓';
-  }
-
-  showToast(`Language set to ${langName}`);
-
-  const dropdown = document.getElementById('langDropdown');
-  if (dropdown) dropdown.classList.remove('show');
-}
-
-// About Us Modal
+// Modal Handlers
 function openAboutModal() {
   const modal = document.getElementById('aboutModal');
-  if (modal) modal.style.display = 'flex';
+  if (modal) modal.style.display = 'block';
 }
 
 function closeAboutModal() {
@@ -563,7 +433,7 @@ function closeAboutModal() {
   if (modal) modal.style.display = 'none';
 }
 
-// Event Listeners
+// Listeners
 if (searchBtn) searchBtn.addEventListener('click', handleSearch);
 if (searchInput) searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
 
@@ -577,21 +447,15 @@ window.addEventListener('scroll', () => {
   }
 });
 
-// Window Outside Clicks Handler
 window.addEventListener('click', (e) => {
   const shareModal = document.getElementById('shareModal');
   const detailModal = document.getElementById('wallpaperDetailModal');
-  const langDropdown = document.getElementById('langDropdown');
+  const aboutModal = document.getElementById('aboutModal');
 
   if (e.target === shareModal) closeShareModal();
   if (e.target === detailModal) closeWallpaperDetail();
-
-  if (langDropdown && langDropdown.classList.contains('show')) {
-    if (!langDropdown.contains(e.target) && !e.target.closest('#sidebarLangBtn')) {
-      langDropdown.classList.remove('show');
-    }
-  }
+  if (e.target === aboutModal) closeAboutModal();
 });
 
-// Initial Wallpapers Load
+// Initial Load
 fetchWallpapers(currentQuery, currentPage);
