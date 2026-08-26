@@ -67,39 +67,86 @@ function applyLanguage(lang) {
   document.body.dir = (lang === 'ur' || lang === 'ar') ? 'rtl' : 'ltr';
 }
 
-function selectLanguage(code) {
-  applyLanguage(code);
-  closeLanguageModal();
-  showToast(`Language changed to ${translations[code].name}`);
-}
+// ==========================================
+// 🌐 LANGUAGE DATA WITH FLAGS
+// ==========================================
+const langDetails = {
+  en: { name: "English", flag: "🇬🇧" },
+  ur: { name: "اردو", flag: "🇵🇰" },
+  hi: { name: "हिन्दी", flag: "🇮🇳" },
+  es: { name: "Spanish", flag: "🇪🇸" },
+  fr: { name: "French", flag: "🇫🇷" },
+  de: { name: "German", flag: "🇩🇪" },
+  ar: { name: "العربية", flag: "🇸🇦" },
+  zh: { name: "Chinese", flag: "🇨🇳" },
+  tr: { name: "Turkish", flag: "🇹🇷" },
+  ru: { name: "Russian", flag: "🇷🇺" }
+};
 
+// ==========================================
+// 🌐 POPUP DROPDOWN (LIKE SCREENSHOT)
+// ==========================================
 function toggleLanguage(e) {
-  if (e) e.preventDefault();
-  const modal = document.getElementById('languageModal');
-  const langList = document.getElementById('languageList');
+  if (e) e.stopPropagation();
 
-  if (modal && langList) {
-    langList.innerHTML = '';
-    langKeys.forEach(code => {
-      const btn = document.createElement('button');
-      btn.className = `lang-option-btn ${code === currentLang ? 'active-lang' : ''}`;
-      btn.innerText = translations[code].name;
-      btn.onclick = () => selectLanguage(code);
-      langList.appendChild(btn);
-    });
-    modal.style.display = 'block';
+  let langBox = document.getElementById('langDropdownBox');
+
+  if (langBox) {
+    closeLanguageDropdown();
+    return;
+  }
+
+  const isLightMode = document.body.classList.contains('light-mode');
+
+  langBox = document.createElement('div');
+  langBox.id = 'langDropdownBox';
+  langBox.className = `custom-lang-popup ${isLightMode ? 'light-mode' : ''}`;
+
+  let listHTML = langKeys.map(code => {
+    const isSelected = code === currentLang;
+    const flag = langDetails[code]?.flag || "🌐";
+    const name = langDetails[code]?.name || translations[code]?.name;
+
+    return `
+      <button class="lang-row ${isSelected ? 'selected-blue' : ''}" onclick="selectLanguage('${code}')">
+        <div class="lang-left">
+          <span class="flag-icon">${flag}</span>
+          <span class="lang-text">${name}</span>
+        </div>
+        ${isSelected ? '<span class="check-mark">✓</span>' : ''}
+      </button>
+    `;
+  }).join('');
+
+  langBox.innerHTML = `<div class="lang-popup-inner">${listHTML}</div>`;
+
+  const btn = e ? e.currentTarget : document.getElementById('langToggleBtn');
+  if (btn) {
+    btn.parentNode.style.position = 'relative';
+    btn.parentNode.appendChild(langBox);
   } else {
-    const currentIndex = langKeys.indexOf(currentLang);
-    const nextIndex = (currentIndex + 1) % langKeys.length;
-    applyLanguage(langKeys[nextIndex]);
-    showToast(`Language: ${translations[langKeys[nextIndex]].name}`);
+    document.body.appendChild(langBox);
   }
 }
 
-function closeLanguageModal() {
-  const modal = document.getElementById('languageModal');
-  if (modal) modal.style.display = 'none';
+function selectLanguage(code) {
+  applyLanguage(code);
+  closeLanguageDropdown();
+  showToast(`Language changed to ${langDetails[code]?.name || code}`);
 }
+
+function closeLanguageDropdown() {
+  const langBox = document.getElementById('langDropdownBox');
+  if (langBox) langBox.remove();
+}
+
+// Outside click par box close karna
+document.addEventListener('click', (e) => {
+  const langBox = document.getElementById('langDropdownBox');
+  if (langBox && !langBox.contains(e.target)) {
+    closeLanguageDropdown();
+  }
+});
 
 // ==========================================
 // ⚙️ CORE HELPER & UI FUNCTIONS

@@ -30,19 +30,17 @@
         </div>
         <div class="sidebar-bottom">
             <a href="login.html" class="nav-icon" id="navAccount" title="Account"><i class="fa-regular fa-user"></i></a>
-            <a href="#" class="nav-icon" id="navLanguage" onclick="toggleLanguage(event)" title="Language"><i class="fa-solid fa-language"></i></a>
+            
+            <!-- Language Dropdown Wrapper (Positioned Relative for Dropdown Alignment) -->
+            <div style="position: relative; display: inline-block;">
+                <a href="#" class="nav-icon" id="langToggleBtn" onclick="toggleLanguage(event)" title="Language">
+                    <i class="fa-solid fa-language"></i>
+                </a>
+            </div>
+
             <a href="#" class="nav-icon" id="navMenu" onclick="toggleSidebarMenu(event)" title="Menu"><i class="fa-solid fa-bars"></i></a>
         </div>
     </aside>
-
-    <!-- Compact Language Dropdown Popup (Right Side of Language Icon) -->
-    <div id="languageDropdown" class="lang-dropdown-box" style="display: none;">
-        <div class="lang-dropdown-header">
-            <span><i class="fa-solid fa-language"></i> <span data-key="selectLangHeader">Select Language</span></span>
-            <button onclick="closeLanguageDropdown()">&times;</button>
-        </div>
-        <div id="languageList" class="lang-dropdown-list"></div>
-    </div>
 
     <!-- Main Wrapper -->
     <div class="main-wrapper">

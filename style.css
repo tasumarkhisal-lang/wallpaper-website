@@ -765,3 +765,83 @@ body.light-mode .lang-dropdown-item:hover {
   font-size: 13px;
   font-weight: bold;
 }
+/* 🌐 Custom Language Popup (Image Style) */
+.custom-lang-popup {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  width: 190px;
+  background-color: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  overflow: hidden;
+  font-family: sans-serif;
+}
+
+/* Light Theme Styling */
+body.light-mode .custom-lang-popup,
+.custom-lang-popup.light-mode {
+  background-color: #ffffff;
+  border: 1px solid #dcdcdc;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.lang-popup-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+/* Each Language Row */
+.lang-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  color: var(--text-color, #dddddd);
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s ease;
+}
+
+body.light-mode .lang-row {
+  color: #333333;
+}
+
+/* Hover State */
+.lang-row:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+body.light-mode .lang-row:hover {
+  background-color: #f0f0f0;
+}
+
+/* Selected Active Row (Exact Blue Style like Screenshot) */
+.lang-row.selected-blue {
+  background-color: #1a73e8 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+.lang-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.flag-icon {
+  font-size: 1.1rem;
+}
+
+.check-mark {
+  font-size: 1rem;
+  font-weight: bold;
+}
