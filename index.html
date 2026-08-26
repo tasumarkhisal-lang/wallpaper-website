@@ -18,101 +18,110 @@
 </head>
 <body>
 
-   <!-- Left Sidebar -->
-<aside class="sidebar">
-    <div class="sidebar-top">
-        <a href="#" class="nav-icon active" id="navHome" onclick="showHomeView(event)" title="Home"><i class="fa-solid fa-wand-magic-sparkles"></i></a>
-        <a href="#" class="nav-icon" id="navGallery" onclick="showGalleryView(event)" title="Gallery"><i class="fa-regular fa-image"></i></a>
-        <a href="#" class="nav-icon" id="navVideos" onclick="showVideosView(event)" title="Videos"><i class="fa-regular fa-circle-play"></i></a>
-        <a href="#" class="nav-icon" id="navExplore" onclick="showExploreView(event)" title="Explore"><i class="fa-regular fa-compass"></i></a>
-        <a href="#" class="nav-icon" id="navDownloads" onclick="showDownloadsView(event)" title="Downloads"><i class="fa-solid fa-download"></i></a>
-        <a href="#" class="nav-icon" id="navBookmarks" onclick="showBookmarksView(event)" title="Bookmarks"><i class="fa-regular fa-bookmark"></i></a>
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <a href="#" class="nav-icon active" id="navHome" onclick="showHomeView(event)" title="Home"><i class="fa-solid fa-wand-magic-sparkles"></i></a>
+            <a href="#" class="nav-icon" id="navGallery" onclick="showGalleryView(event)" title="Gallery"><i class="fa-regular fa-image"></i></a>
+            <a href="#" class="nav-icon" id="navVideos" onclick="showVideosView(event)" title="Videos"><i class="fa-regular fa-circle-play"></i></a>
+            <a href="#" class="nav-icon" id="navExplore" onclick="showExploreView(event)" title="Explore"><i class="fa-regular fa-compass"></i></a>
+            <a href="#" class="nav-icon" id="navDownloads" onclick="showDownloadsView(event)" title="Downloads"><i class="fa-solid fa-download"></i></a>
+            <a href="#" class="nav-icon" id="navBookmarks" onclick="showBookmarksView(event)" title="Bookmarks"><i class="fa-regular fa-bookmark"></i></a>
+        </div>
+        <div class="sidebar-bottom">
+            <a href="login.html" class="nav-icon" id="navAccount" title="Account"><i class="fa-regular fa-user"></i></a>
+            <a href="#" class="nav-icon" id="navLanguage" onclick="toggleLanguage(event)" title="Language"><i class="fa-solid fa-language"></i></a>
+            <a href="#" class="nav-icon" id="navMenu" onclick="toggleSidebarMenu(event)" title="Menu"><i class="fa-solid fa-bars"></i></a>
+        </div>
+    </aside>
+
+    <!-- Compact Language Dropdown Popup (Right Side of Language Icon) -->
+    <div id="languageDropdown" class="lang-dropdown-box" style="display: none;">
+        <div class="lang-dropdown-header">
+            <span><i class="fa-solid fa-language"></i> <span data-key="selectLangHeader">Select Language</span></span>
+            <button onclick="closeLanguageDropdown()">&times;</button>
+        </div>
+        <div id="languageList" class="lang-dropdown-list"></div>
     </div>
-    <div class="sidebar-bottom">
-        <a href="login.html" class="nav-icon" id="navAccount" title="Account"><i class="fa-regular fa-user"></i></a>
-        <a href="#" class="nav-icon" id="navLanguage" onclick="toggleLanguage(event)" title="Language"><i class="fa-solid fa-language"></i></a>
-        <a href="#" class="nav-icon" id="navMenu" onclick="toggleSidebarMenu(event)" title="Menu"><i class="fa-solid fa-bars"></i></a>
-    </div>
-</aside>
 
     <!-- Main Wrapper -->
     <div class="main-wrapper">
         
-       <!-- Header Navigation -->
-<header class="navbar">
-    <div class="logo">
-        <i class="fa-solid fa-wand-magic-sparkles logo-icon"></i>
-        <span class="logo-text">WallpaperHub</span>
-    </div>
-    <div class="nav-actions">
-        <button class="nav-btn fav-badge-btn" onclick="showFavorites()" id="favCountBtn" title="Favorites">
-            <i class="fa-solid fa-heart"></i> <span id="favCounter">(0)</span>
-        </button>
-        <button class="nav-btn" id="themeToggleBtn" title="Toggle Theme">
-            <i class="fa-solid fa-moon"></i>
-        </button>
-        <a href="login.html" class="login-btn-nav" title="Login / Profile">
-            <i class="fa-solid fa-user"></i>
-        </a>
-    </div>
-</header>
+        <!-- Header Navigation -->
+        <header class="navbar">
+            <div class="logo">
+                <i class="fa-solid fa-wand-magic-sparkles logo-icon"></i>
+                <span class="logo-text" data-key="siteLogo">WallpaperHub</span>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-btn fav-badge-btn" onclick="showFavorites()" id="favCountBtn" title="Favorites">
+                    <i class="fa-solid fa-heart"></i> <span id="favCounter">(0)</span>
+                </button>
+                <button class="nav-btn" id="themeToggleBtn" title="Toggle Theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <a href="login.html" class="login-btn-nav" title="Login / Profile">
+                    <i class="fa-solid fa-user"></i>
+                </a>
+            </div>
+        </header>
 
-<!-- Main Hero Section -->
-<section class="hero-section">
-    <h1 class="hero-title" data-key="title">JennWall 4K Wallpaper</h1>
-    <p class="hero-subtitle" data-key="subtitle">Download ultra HD 4K wallpapers for your desktop & phone</p>
-    
-    <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <input type="text" id="searchInput" placeholder="Search here..." autocomplete="off" data-key-placeholder="searchPlaceholder">
-        <button id="searchBtn" data-key="searchBtn">Search</button>
-        <div id="recentSearches" class="recent-searches"></div>
-    </div>
+        <!-- Main Hero Section -->
+        <section class="hero-section">
+            <h1 class="hero-title" data-key="heroTitle">JennWall 4K Wallpaper</h1>
+            <p class="hero-subtitle" data-key="heroSubtitle">Download ultra HD 4K wallpapers for your desktop & phone</p>
+            
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Search here..." autocomplete="off" data-key-placeholder="searchPlaceholder">
+                <button id="searchBtn" data-key="searchBtn">Search</button>
+                <div id="recentSearches" class="recent-searches"></div>
+            </div>
 
-    <!-- Category Pills -->
-    <div class="categories">
-        <button class="chip active" onclick="filterCategory('4k wallpaper')" data-key="catAll">All</button>
-        <button class="chip" onclick="filterCategory('Nature')" data-key="catNature">Nature</button>
-        <button class="chip" onclick="filterCategory('Anime')" data-key="catAnime">Anime</button>
-        <button class="chip" onclick="filterCategory('Cars')" data-key="catCars">Cars</button>
-        <button class="chip" onclick="filterCategory('Aesthetic')" data-key="catAesthetic">Aesthetic</button>
-        <button class="chip" onclick="filterCategory('Dark')" data-key="catDark">Dark</button>
-    </div>
-</section>
-            <!-- Filters Bar -->
-            <div class="filter-bar">
-                <div class="filter-group">
-                    <label for="orientationFilter"><i class="fa-solid fa-crop-simple"></i> Orientation:</label>
-                    <select id="orientationFilter" onchange="applyFilters()">
-                        <option value="">All Types</option>
-                        <option value="landscape">Landscape</option>
-                        <option value="portrait">Portrait</option>
-                        <option value="square">Square</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="colorFilter"><i class="fa-solid fa-palette"></i> Color:</label>
-                    <select id="colorFilter" onchange="applyFilters()">
-                        <option value="">All Colors</option>
-                        <option value="black_and_white">Black & White</option>
-                        <option value="blue">Blue</option>
-                        <option value="red">Red</option>
-                        <option value="green">Green</option>
-                        <option value="yellow">Yellow</option>
-                        <option value="purple">Purple</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="sortFilter"><i class="fa-solid fa-arrow-down-wide-short"></i> Sort By:</label>
-                    <select id="sortFilter" onchange="applyFilters()">
-                        <option value="relevant">Relevant</option>
-                        <option value="latest">Latest</option>
-                    </select>
-                </div>
+            <!-- Category Pills -->
+            <div class="categories">
+                <button class="chip active" onclick="filterCategory('4k wallpaper')" data-key="catAll">All</button>
+                <button class="chip" onclick="filterCategory('Nature')" data-key="catNature">Nature</button>
+                <button class="chip" onclick="filterCategory('Anime')" data-key="catAnime">Anime</button>
+                <button class="chip" onclick="filterCategory('Cars')" data-key="catCars">Cars</button>
+                <button class="chip" onclick="filterCategory('Aesthetic')" data-key="catAesthetic">Aesthetic</button>
+                <button class="chip" onclick="filterCategory('Dark')" data-key="catDark">Dark</button>
             </div>
         </section>
+
+        <!-- Filters Bar -->
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label for="orientationFilter"><i class="fa-solid fa-crop-simple"></i> <span data-key="filterOrientation">Orientation:</span></label>
+                <select id="orientationFilter" onchange="applyFilters()">
+                    <option value="" data-key="optAllTypes">All Types</option>
+                    <option value="landscape" data-key="optLandscape">Landscape</option>
+                    <option value="portrait" data-key="optPortrait">Portrait</option>
+                    <option value="square" data-key="optSquare">Square</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="colorFilter"><i class="fa-solid fa-palette"></i> <span data-key="filterColor">Color:</span></label>
+                <select id="colorFilter" onchange="applyFilters()">
+                    <option value="" data-key="optAllColors">All Colors</option>
+                    <option value="black_and_white" data-key="optBW">Black & White</option>
+                    <option value="blue" data-key="optBlue">Blue</option>
+                    <option value="red" data-key="optRed">Red</option>
+                    <option value="green" data-key="optGreen">Green</option>
+                    <option value="yellow" data-key="optYellow">Yellow</option>
+                    <option value="purple" data-key="optPurple">Purple</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="sortFilter"><i class="fa-solid fa-arrow-down-wide-short"></i> <span data-key="filterSort">Sort By:</span></label>
+                <select id="sortFilter" onchange="applyFilters()">
+                    <option value="relevant" data-key="optRelevant">Relevant</option>
+                    <option value="latest" data-key="optLatest">Latest</option>
+                </select>
+            </div>
+        </div>
 
         <!-- Gallery Grid -->
         <main class="gallery-container">
@@ -120,7 +129,7 @@
             
             <div id="loading" class="loading-spinner">
                 <div class="spinner"></div>
-                <p>Loading wallpapers...</p>
+                <p data-key="loadingText">Loading wallpapers...</p>
             </div>
         </main>
     </div>
@@ -136,12 +145,18 @@
                 <img id="detailMainImage" src="" alt="Wallpaper Detail">
             </div>
             <div class="modal-actions">
-                <button id="detailDownloadBtn" class="btn btn-primary"><i class="fa-solid fa-download"></i> Download Original</button>
-                <button id="detailFavBtn" class="btn btn-secondary"><i class="fa-regular fa-heart"></i> Favorite</button>
-                <button id="detailShareBtn" class="btn btn-secondary"><i class="fa-solid fa-share-nodes"></i> Share</button>
+                <button id="detailDownloadBtn" class="btn btn-primary">
+                    <i class="fa-solid fa-download"></i> <span data-key="btnDownload">Download Original</span>
+                </button>
+                <button id="detailFavBtn" class="btn btn-secondary">
+                    <i class="fa-regular fa-heart"></i> <span data-key="btnFavorite">Favorite</span>
+                </button>
+                <button id="detailShareBtn" class="btn btn-secondary">
+                    <i class="fa-solid fa-share-nodes"></i> <span data-key="btnShare">Share</span>
+                </button>
             </div>
             <div class="related-section">
-                <h3>Related Wallpapers</h3>
+                <h3 data-key="relatedTitle">Related Wallpapers</h3>
                 <div id="relatedGrid" class="related-grid"></div>
             </div>
         </div>
@@ -151,11 +166,11 @@
     <div id="shareModal" class="modal">
         <div class="modal-card">
             <span class="close-modal" onclick="closeShareModal()">&times;</span>
-            <h3>Share Wallpaper</h3>
-            <p style="font-size: 0.9rem; margin-bottom: 12px; color: var(--text-muted);">Copy the link or share directly to social media:</p>
+            <h3 data-key="shareTitle">Share Wallpaper</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 12px; color: var(--text-muted);" data-key="shareSub">Copy the link or share directly to social media:</p>
             <div class="share-input-group">
                 <input type="text" id="shareLinkInput" readonly>
-                <button onclick="copyShareLink()">Copy</button>
+                <button onclick="copyShareLink()" data-key="btnCopy">Copy</button>
             </div>
             <div class="social-share-btns">
                 <button onclick="shareToSocial('whatsapp')" class="social-btn whatsapp"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
@@ -165,14 +180,6 @@
             </div>
         </div>
     </div>
-    <!-- Compact Language Dropdown Box -->
-<div id="languageDropdown" class="lang-dropdown-box" style="display: none;">
-    <div class="lang-dropdown-header">
-        <span><i class="fa-solid fa-language"></i> Select Language</span>
-        <button onclick="closeLanguageDropdown()">&times;</button>
-    </div>
-    <div id="languageList" class="lang-dropdown-list"></div>
-</div>
 
     <script src="script.js"></script>
 </body>

@@ -1,3 +1,6 @@
+// ==========================================
+// 🚀 CONFIGURATION & GLOBAL STATES
+// ==========================================
 const UNSPLASH_ACCESS_KEY = 'kmwR0yF5WD3sLP8plZ2r_oSGMcuw0eHfCksqSDEp__c';
 
 const searchInput = document.getElementById('searchInput');
@@ -24,6 +27,83 @@ let favorites = JSON.parse(localStorage.getItem('fav_wallpapers')) || [];
 let recentSearches = JSON.parse(localStorage.getItem('recent_searches')) || [];
 let downloadHistory = JSON.parse(localStorage.getItem('download_history')) || [];
 
+// ==========================================
+// 🌐 LANGUAGE TRANSLATIONS & RTL SYSTEM
+// ==========================================
+const translations = {
+  en: { name: "English", title: "JennWall 4K Wallpaper", subtitle: "Download ultra HD 4K wallpapers for your desktop & phone", searchPlaceholder: "Search here...", searchBtn: "Search", catAll: "All", catNature: "Nature", catAnime: "Anime", catCars: "Cars", catAesthetic: "Aesthetic", catDark: "Dark" },
+  ur: { name: "اردو", title: "جین وال 4K وال پیپر", subtitle: "اپنے ڈیسک ٹاپ اور فون کے لیے الٹرا HD 4K وال پیپرز ڈاؤن لوڈ کریں", searchPlaceholder: "یہاں تلاش کریں...", searchBtn: "تلاش کریں", catAll: "سب", catNature: "قدرت", catAnime: "اینیم", catCars: "گاڑیاں", catAesthetic: "خوبصورت", catDark: "ڈارک" },
+  hi: { name: "हिन्दी", title: "जेनवॉल 4K वॉलपेपर", subtitle: "अपने डेस्कटॉप और फोन के लिए अल्ट्रा HD 4K वॉलपेपर डाउनलोड करें", searchPlaceholder: "यहाँ खोजें...", searchBtn: "खोजें", catAll: "सभी", catNature: "प्रकृति", catAnime: "एनिमे", catCars: "कारें", catAesthetic: "सुंदर", catDark: "डार्क" },
+  es: { name: "Español", title: "Fondo de Pantalla JennWall 4K", subtitle: "Descarga fondos de pantalla ultra HD 4K para tu PC y teléfono", searchPlaceholder: "Buscar aquí...", searchBtn: "Buscar", catAll: "Todo", catNature: "Naturaleza", catAnime: "Anime", catCars: "Coches", catAesthetic: "Estético", catDark: "Oscuro" },
+  fr: { name: "Français", title: "Fonds d'écran JennWall 4K", subtitle: "Téléchargez des fonds d'écran ultra HD 4K pour PC et mobile", searchPlaceholder: "Rechercher...", searchBtn: "Chercher", catAll: "Tout", catNature: "Nature", catAnime: "Animé", catCars: "Voitures", catAesthetic: "Esthétique", catDark: "Sombre" },
+  ar: { name: "العربية", title: "خلفيات جين وال 4K", subtitle: "قم بتنزيل خلفيات فائقة الدقة 4K لجهاز الكمبيوتر والهاتف", searchPlaceholder: "ابحث هنا...", searchBtn: "بحث", catAll: "الكل", catNature: "طبيعة", catAnime: "أنيمي", catCars: "سيارات", catAesthetic: "جمالي", catDark: "داكن" },
+  de: { name: "Deutsch", title: "JennWall 4K Hintergrundbilder", subtitle: "Laden Sie Ultra HD 4K Hintergrundbilder für PC und Handy herunter", searchPlaceholder: "Hier suchen...", searchBtn: "Suchen", catAll: "Alle", catNature: "Natur", catAnime: "Anime", catCars: "Autos", catAesthetic: "Ästhetisch", catDark: "Dunkel" },
+  zh: { name: "中文", title: "JennWall 4K 壁纸", subtitle: "下载适用于电脑和手机的超高清 4K 壁纸", searchPlaceholder: "在此搜索...", searchBtn: "搜索", catAll: "全部", catNature: "自然", catAnime: "动漫", catCars: "汽车", catAesthetic: "唯美", catDark: "黑暗" },
+  tr: { name: "Türkçe", title: "JennWall 4K Duvar Kağıtları", subtitle: "Masaüstünüz ve telefonunuz için ultra HD 4K duvar kağıtları indirin", searchPlaceholder: "Burada ara...", searchBtn: "Ara", catAll: "Tümü", catNature: "Doğa", catAnime: "Anime", catCars: "Arabalar", catAesthetic: "Estetik", catDark: "Koyu" },
+  ru: { name: "Русский", title: "JennWall 4K Обои", subtitle: "Скачивайте обои ultra HD 4K для ПК и телефона", searchPlaceholder: "Поиск...", searchBtn: "Искать", catAll: "Все", catNature: "Природа", catAnime: "Аниме", catCars: "Машины", catAesthetic: "Эстетика", catDark: "Темные" }
+};
+
+const langKeys = Object.keys(translations);
+let currentLang = localStorage.getItem('site_lang') || 'en';
+
+function applyLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('site_lang', lang);
+
+  document.querySelectorAll('[data-key]').forEach(elem => {
+    const key = elem.getAttribute('data-key');
+    if (translations[lang] && translations[lang][key]) {
+      elem.textContent = translations[lang][key];
+    }
+  });
+
+  document.querySelectorAll('[data-key-placeholder]').forEach(elem => {
+    const key = elem.getAttribute('data-key-placeholder');
+    if (translations[lang] && translations[lang][key]) {
+      elem.placeholder = translations[lang][key];
+    }
+  });
+
+  document.body.dir = (lang === 'ur' || lang === 'ar') ? 'rtl' : 'ltr';
+}
+
+function selectLanguage(code) {
+  applyLanguage(code);
+  closeLanguageModal();
+  showToast(`Language changed to ${translations[code].name}`);
+}
+
+function toggleLanguage(e) {
+  if (e) e.preventDefault();
+  const modal = document.getElementById('languageModal');
+  const langList = document.getElementById('languageList');
+
+  if (modal && langList) {
+    langList.innerHTML = '';
+    langKeys.forEach(code => {
+      const btn = document.createElement('button');
+      btn.className = `lang-option-btn ${code === currentLang ? 'active-lang' : ''}`;
+      btn.innerText = translations[code].name;
+      btn.onclick = () => selectLanguage(code);
+      langList.appendChild(btn);
+    });
+    modal.style.display = 'block';
+  } else {
+    const currentIndex = langKeys.indexOf(currentLang);
+    const nextIndex = (currentIndex + 1) % langKeys.length;
+    applyLanguage(langKeys[nextIndex]);
+    showToast(`Language: ${translations[langKeys[nextIndex]].name}`);
+  }
+}
+
+function closeLanguageModal() {
+  const modal = document.getElementById('languageModal');
+  if (modal) modal.style.display = 'none';
+}
+
+// ==========================================
+// ⚙️ CORE HELPER & UI FUNCTIONS
+// ==========================================
 function formatUnsplashPhoto(item) {
   if (!item) return null;
   if (item.src && item.photographer !== undefined) return item;
@@ -41,30 +121,26 @@ function formatUnsplashPhoto(item) {
   };
 }
 
-updateFavCount();
-
-if (themeToggleBtn) {
-  themeToggleBtn.addEventListener('click', () => {
-    document.body.classList.toggle('light-mode');
-    const isLight = document.body.classList.contains('light-mode');
-    themeToggleBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-  });
-}
-
 function showToast(message) {
-  const toast = document.getElementById('toast');
-  if (!toast) return;
+  let toast = document.getElementById('toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.className = 'toast';
+    document.body.appendChild(toast);
+  }
   toast.innerText = message;
   toast.className = "toast show";
   setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
 }
 
 function updateFavCount() {
-  if (favCounter) {
-    favCounter.innerText = `(${favorites.length})`;
-  }
+  if (favCounter) favCounter.innerText = `(${favorites.length})`;
 }
 
+// ==========================================
+// 📥 DOWNLOAD & FAVORITES LOGIC
+// ==========================================
 async function downloadImage(imgUrl, fileName) {
   showToast("Downloading started...");
   const cleanFileName = fileName ? fileName.replace(/[^a-zA-Z0-9_-]/g, "_") : "wallpaper";
@@ -130,13 +206,21 @@ function showFavorites() {
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
 
   if (favorites.length === 0) {
-    gallery.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px 0;">No favorites saved yet! ❤️</p>';
+    gallery.innerHTML = `
+      <div class="empty-view-state">
+        <i class="fa-regular fa-heart"></i>
+        <h3>No Favorites Yet</h3>
+        <p>Click on the heart icon on any wallpaper to save it here.</p>
+      </div>`;
     return;
   }
 
   favorites.forEach(photo => renderCard(photo));
 }
 
+// ==========================================
+// 🔗 SHARE LOGIC
+// ==========================================
 function openShareModal(imgUrl) {
   currentShareUrl = imgUrl;
   const shareModal = document.getElementById('shareModal');
@@ -172,6 +256,9 @@ function shareToSocial(platform) {
   window.open(shareUrl, '_blank');
 }
 
+// ==========================================
+// 🔍 SEARCH & RECENT SEARCHES LOGIC
+// ==========================================
 function saveRecentSearch(query) {
   if (!query) return;
   recentSearches = recentSearches.filter(q => q.toLowerCase() !== query.toLowerCase());
@@ -200,19 +287,9 @@ function renderRecentSearches() {
   });
 }
 
-if (searchInput) {
-  searchInput.addEventListener('focus', () => {
-    renderRecentSearches();
-    if (recentSearches.length > 0 && recentSearchesContainer) recentSearchesContainer.classList.add('show');
-  });
-}
-
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.search-box') && recentSearchesContainer) {
-    recentSearchesContainer.classList.remove('show');
-  }
-});
-
+// ==========================================
+// 🖼️ MODAL & RELATED WALLPAPERS
+// ==========================================
 function openWallpaperDetail(photo) {
   const modal = document.getElementById('wallpaperDetailModal');
   const mainImg = document.getElementById('detailMainImage');
@@ -223,13 +300,9 @@ function openWallpaperDetail(photo) {
   if (!modal || !mainImg) return;
 
   const titleName = photo.alt ? photo.alt.replace(/[^a-zA-Z0-9]/g, "_") : `wallpaper_${photo.id}`;
-
   mainImg.src = photo.src.large2x || photo.src.original;
 
-  if (downloadBtn) {
-    downloadBtn.onclick = () => downloadImage(photo.src.original, titleName);
-  }
-
+  if (downloadBtn) downloadBtn.onclick = () => downloadImage(photo.src.original, titleName);
   if (shareBtn) {
     shareBtn.onclick = (e) => {
       e.stopPropagation();
@@ -287,7 +360,11 @@ async function loadRelatedWallpapers(queryKeyword) {
   }
 }
 
+// ==========================================
+// 🎨 RENDER & API FETCH
+// ==========================================
 function renderCard(photo) {
+  if (!gallery) return;
   const card = document.createElement('div');
   card.classList.add('card');
 
@@ -381,11 +458,12 @@ function resetGallery() {
   isFavoritesView = false;
   currentPage = 1;
   hasMore = true;
-  gallery.innerHTML = '';
+  if (gallery) gallery.innerHTML = '';
   loadedImageIds.clear();
 }
 
 function handleSearch() {
+  if (!searchInput) return;
   const query = searchInput.value.trim();
   if (query) {
     saveRecentSearch(query);
@@ -396,28 +474,21 @@ function handleSearch() {
   }
 }
 
-function filterCategory(categoryName) {
+function filterCategory(categoryName, event) {
   currentQuery = categoryName;
   resetGallery();
   document.querySelectorAll('.chip').forEach(btn => btn.classList.remove('active'));
-  if (window.event && window.event.target) window.event.target.classList.add('active');
+  if (event && event.target) {
+    event.target.classList.add('active');
+  } else if (window.event && window.event.target) {
+    window.event.target.classList.add('active');
+  }
   fetchWallpapers(currentQuery, currentPage);
 }
 
-if (searchBtn) searchBtn.addEventListener('click', handleSearch);
-if (searchInput) searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
-
-window.addEventListener('scroll', () => {
-  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-  if (scrollTop + clientHeight >= scrollHeight - 800) {
-    if (!isLoading && hasMore && !isFavoritesView) {
-      currentPage++;
-      fetchWallpapers(currentQuery, currentPage);
-    }
-  }
-});
-
-// Navigation Views
+// ==========================================
+// 🚀 NAVIGATION VIEWS
+// ==========================================
 function setActiveNav(elementId) {
   document.querySelectorAll('.sidebar .nav-icon').forEach(icon => icon.classList.remove('active'));
   const activeElem = document.getElementById(elementId);
@@ -451,13 +522,15 @@ function showVideosView(e) {
   const heroSection = document.querySelector('.hero-section');
   if (heroSection) heroSection.style.display = 'none';
 
-  gallery.innerHTML = `
-    <div class="empty-view-state">
-      <i class="fa-regular fa-circle-play"></i>
-      <h3>Live & Video Wallpapers</h3>
-      <p>Video wallpapers feature is coming soon to JennWall!</p>
-    </div>
-  `;
+  if (gallery) {
+    gallery.innerHTML = `
+      <div class="empty-view-state">
+        <i class="fa-regular fa-circle-play"></i>
+        <h3>Live & Video Wallpapers</h3>
+        <p>Video wallpapers feature is coming soon to JennWall!</p>
+      </div>
+    `;
+  }
 }
 
 function showExploreView(e) {
@@ -481,6 +554,7 @@ function showDownloadsView(e) {
   const heroSection = document.querySelector('.hero-section');
   if (heroSection) heroSection.style.display = 'none';
 
+  if (!gallery) return;
   gallery.innerHTML = '';
   if (!downloadHistory || downloadHistory.length === 0) {
     gallery.innerHTML = `
@@ -511,6 +585,7 @@ function showBookmarksView(e) {
   const heroSection = document.querySelector('.hero-section');
   if (heroSection) heroSection.style.display = 'none';
 
+  if (!gallery) return;
   gallery.innerHTML = '';
   if (!favorites || favorites.length === 0) {
     gallery.innerHTML = `
@@ -527,158 +602,44 @@ function showBookmarksView(e) {
 }
 
 // ==========================================
-// 🌐 UPDATED LANGUAGE TRANSLATIONS SYSTEM
+// 🎯 LISTENERS & INITIALIZATION
 // ==========================================
+updateFavCount();
 
-const translations = {
-  en: {
-    name: "English",
-    title: "JennWall 4K Wallpaper",
-    subtitle: "Download ultra HD 4K wallpapers for your desktop & phone",
-    searchPlaceholder: "Search here...",
-    searchBtn: "Search",
-    catAll: "All", catNature: "Nature", catAnime: "Anime", catCars: "Cars", catAesthetic: "Aesthetic", catDark: "Dark"
-  },
-  ur: {
-    name: "اردو",
-    title: "جین وال 4K وال پیپر",
-    subtitle: "اپنے ڈیسک ٹاپ اور فون کے لیے الٹرا HD 4K وال پیپرز ڈاؤن لوڈ کریں",
-    searchPlaceholder: "یہاں تلاش کریں...",
-    searchBtn: "تلاش کریں",
-    catAll: "سب", catNature: "قدرت", catAnime: "اینیم", catCars: "گاڑیاں", catAesthetic: "خوبصورت", catDark: "ڈارک"
-  },
-  hi: {
-    name: "हिन्दी",
-    title: "जेनवॉल 4K वॉलपेपर",
-    subtitle: "अपने डेस्कटॉप और फोन के लिए अल्ट्रा HD 4K वॉलपेपर डाउनलोड करें",
-    searchPlaceholder: "यहाँ खोजें...",
-    searchBtn: "खोजें",
-    catAll: "सभी", catNature: "प्रकृति", catAnime: "एनिमे", catCars: "कारें", catAesthetic: "सुंदर", catDark: "डार्क"
-  },
-  es: {
-    name: "Español",
-    title: "Fondo de Pantalla JennWall 4K",
-    subtitle: "Descarga fondos de pantalla ultra HD 4K para tu PC y teléfono",
-    searchPlaceholder: "Buscar aquí...",
-    searchBtn: "Buscar",
-    catAll: "Todo", catNature: "Naturaleza", catAnime: "Anime", catCars: "Coches", catAesthetic: "Estético", catDark: "Oscuro"
-  },
-  fr: {
-    name: "Français",
-    title: "Fonds d'écran JennWall 4K",
-    subtitle: "Téléchargez des fonds d'écran ultra HD 4K pour PC et mobile",
-    searchPlaceholder: "Rechercher...",
-    searchBtn: "Chercher",
-    catAll: "Tout", catNature: "Nature", catAnime: "Animé", catCars: "Voitures", catAesthetic: "Esthétique", catDark: "Sombre"
-  },
-  ar: {
-    name: "العربية",
-    title: "خلفيات جين وال 4K",
-    subtitle: "قم بتنزيل خلفيات فائقة الدقة 4K لجهاز الكمبيوتر والهاتف",
-    searchPlaceholder: "ابحث هنا...",
-    searchBtn: "بحث",
-    catAll: "الكل", catNature: "طبيعة", catAnime: "أنيمي", catCars: "سيارات", catAesthetic: "جمالي", catDark: "داكن"
-  },
-  de: {
-    name: "Deutsch",
-    title: "JennWall 4K Hintergrundbilder",
-    subtitle: "Laden Sie Ultra HD 4K Hintergrundbilder für PC und Handy herunter",
-    searchPlaceholder: "Hier suchen...",
-    searchBtn: "Suchen",
-    catAll: "Alle", catNature: "Natur", catAnime: "Anime", catCars: "Autos", catAesthetic: "Ästhetisch", catDark: "Dunkel"
-  },
-  zh: {
-    name: "中文",
-    title: "JennWall 4K 壁纸",
-    subtitle: "下载适用于电脑和手机的超高清 4K 壁纸",
-    searchPlaceholder: "在此搜索...",
-    searchBtn: "搜索",
-    catAll: "全部", catNature: "自然", catAnime: "动漫", catCars: "汽车", catAesthetic: "唯美", catDark: "黑暗"
-  },
-  tr: {
-    name: "Türkçe",
-    title: "JennWall 4K Duvar Kağıtları",
-    subtitle: "Masaüstünüz ve telefonunuz için ultra HD 4K duvar kağıtları indirin",
-    searchPlaceholder: "Burada ara...",
-    searchBtn: "Ara",
-    catAll: "Tümü", catNature: "Doğa", catAnime: "Anime", catCars: "Arabalar", catAesthetic: "Estetik", catDark: "Koyu"
-  },
-  ru: {
-    name: "Русский",
-    title: "JennWall 4K Обои",
-    subtitle: "Скачивайте обои ultra HD 4K для ПК и телефона",
-    searchPlaceholder: "Поиск...",
-    searchBtn: "Искать",
-    catAll: "Все", catNature: "Природа", catAnime: "Аниме", catCars: "Машины", catAesthetic: "Эстетика", catDark: "Темные"
-  }
-};
-
-const langKeys = Object.keys(translations);
-let currentLang = localStorage.getItem('site_lang') || 'en';
-
-function applyLanguage(lang) {
-  currentLang = lang;
-  localStorage.setItem('site_lang', lang);
-
-  // Update elements with data-key
-  document.querySelectorAll('[data-key]').forEach(elem => {
-    const key = elem.getAttribute('data-key');
-    if (translations[lang] && translations[lang][key]) {
-      elem.textContent = translations[lang][key];
-    }
+if (themeToggleBtn) {
+  themeToggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('light-mode');
+    const isLight = document.body.classList.contains('light-mode');
+    themeToggleBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
   });
+}
 
-  // Update inputs with data-key-placeholder
-  document.querySelectorAll('[data-key-placeholder]').forEach(elem => {
-    const key = elem.getAttribute('data-key-placeholder');
-    if (translations[lang] && translations[lang][key]) {
-      elem.placeholder = translations[lang][key];
-    }
+if (searchInput) {
+  searchInput.addEventListener('focus', () => {
+    renderRecentSearches();
+    if (recentSearches.length > 0 && recentSearchesContainer) recentSearchesContainer.classList.add('show');
   });
-
-  // RTL/LTR support for languages like Urdu / Arabic
-  document.body.dir = (lang === 'ur' || lang === 'ar') ? 'rtl' : 'ltr';
+  searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
 }
 
-function selectLanguage(code) {
-  applyLanguage(code);
-  closeLanguageModal();
-  showToast(`Language changed to ${translations[code].name}`);
-}
+if (searchBtn) searchBtn.addEventListener('click', handleSearch);
 
-function toggleLanguage(e) {
-  if (e) e.preventDefault();
-
-  const modal = document.getElementById('languageModal');
-  const langList = document.getElementById('languageList');
-
-  // If language modal exists, show list in modal
-  if (modal && langList) {
-    langList.innerHTML = '';
-    langKeys.forEach(code => {
-      const btn = document.createElement('button');
-      btn.className = `lang-option-btn ${code === currentLang ? 'active-lang' : ''}`;
-      btn.innerText = translations[code].name;
-      btn.onclick = () => selectLanguage(code);
-      langList.appendChild(btn);
-    });
-    modal.style.display = 'block';
-  } else {
-    // Fallback: If no modal HTML exists, toggle sequentially through languages
-    const currentIndex = langKeys.indexOf(currentLang);
-    const nextIndex = (currentIndex + 1) % langKeys.length;
-    const nextLang = langKeys[nextIndex];
-    applyLanguage(nextLang);
-    showToast(`Language: ${translations[nextLang].name}`);
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-box') && recentSearchesContainer) {
+    recentSearchesContainer.classList.remove('show');
   }
-}
+});
 
-function closeLanguageModal() {
-  const modal = document.getElementById('languageModal');
-  if (modal) modal.style.display = 'none';
-}
+window.addEventListener('scroll', () => {
+  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+  if (scrollTop + clientHeight >= scrollHeight - 800) {
+    if (!isLoading && hasMore && !isFavoritesView) {
+      currentPage++;
+      fetchWallpapers(currentQuery, currentPage);
+    }
+  }
+});
 
-// Window Event Listeners for Modals
 window.addEventListener('click', (e) => {
   const shareModal = document.getElementById('shareModal');
   const detailModal = document.getElementById('wallpaperDetailModal');
@@ -689,7 +650,6 @@ window.addEventListener('click', (e) => {
   if (e.target === langModal) closeLanguageModal();
 });
 
-// Initialize on Load
 document.addEventListener('DOMContentLoaded', () => {
   applyLanguage(currentLang);
   fetchWallpapers(currentQuery, currentPage);
