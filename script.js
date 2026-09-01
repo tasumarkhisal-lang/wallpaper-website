@@ -16,6 +16,7 @@ let currentPage = 1;
 let isLoading = false;
 let hasMore = true;
 let isFavoritesView = false;
+let isLiveWallpaperMode = false; // 🎬 Tracks Live Wallpaper Mode
 
 let selectedOrientation = '';
 let selectedColor = '';
@@ -31,18 +32,127 @@ let downloadHistory = JSON.parse(localStorage.getItem('download_history')) || []
 // 🌐 LANGUAGE TRANSLATIONS & RTL SYSTEM
 // ==========================================
 const translations = {
-  en: { name: "English", title: "JennWall 4K Wallpaper", subtitle: "Download ultra HD 4K wallpapers for your desktop & phone", searchPlaceholder: "Search here...", searchBtn: "Search", catAll: "All", catNature: "Nature", catAnime: "Anime", catCars: "Cars", catAesthetic: "Aesthetic", catDark: "Dark" },
-  ur: { name: "اردو", title: "جین وال 4K وال پیپر", subtitle: "اپنے ڈیسک ٹاپ اور فون کے لیے الٹرا HD 4K وال پیپرز ڈاؤن لوڈ کریں", searchPlaceholder: "یہاں تلاش کریں...", searchBtn: "تلاش کریں", catAll: "سب", catNature: "قدرت", catAnime: "اینیم", catCars: "گاڑیاں", catAesthetic: "خوبصورت", catDark: "ڈارک" },
-  hi: { name: "हिन्दी", title: "जेनवॉल 4K वॉलपेपर", subtitle: "अपने डेस्कटॉप और फोन के लिए अल्ट्रा HD 4K वॉलपेपर डाउनलोड करें", searchPlaceholder: "यहाँ खोजें...", searchBtn: "खोजें", catAll: "सभी", catNature: "प्रकृति", catAnime: "एनिमे", catCars: "कारें", catAesthetic: "सुंदर", catDark: "डार्क" },
-  es: { name: "Español", title: "Fondo de Pantalla JennWall 4K", subtitle: "Descarga fondos de pantalla ultra HD 4K para tu PC y teléfono", searchPlaceholder: "Buscar aquí...", searchBtn: "Buscar", catAll: "Todo", catNature: "Naturaleza", catAnime: "Anime", catCars: "Coches", catAesthetic: "Estético", catDark: "Oscuro" },
-  fr: { name: "Français", title: "Fonds d'écran JennWall 4K", subtitle: "Téléchargez des fonds d'écran ultra HD 4K pour PC et mobile", searchPlaceholder: "Rechercher...", searchBtn: "Chercher", catAll: "Tout", catNature: "Nature", catAnime: "Animé", catCars: "Voitures", catAesthetic: "Esthétique", catDark: "Sombre" },
-  ar: { name: "العربية", title: "خلفيات جين وال 4K", subtitle: "قم بتنزيل خلفيات فائقة الدقة 4K لجهاز الكمبيوتر والهاتف", searchPlaceholder: "ابحث هنا...", searchBtn: "بحث", catAll: "الكل", catNature: "طبيعة", catAnime: "أنيمي", catCars: "سيارات", catAesthetic: "جمالي", catDark: "داكن" },
-  de: { name: "Deutsch", title: "JennWall 4K Hintergrundbilder", subtitle: "Laden Sie Ultra HD 4K Hintergrundbilder für PC und Handy herunter", searchPlaceholder: "Hier suchen...", searchBtn: "Suchen", catAll: "Alle", catNature: "Natur", catAnime: "Anime", catCars: "Autos", catAesthetic: "Ästhetisch", catDark: "Dunkel" },
-  zh: { name: "中文", title: "JennWall 4K 壁纸", subtitle: "下载适用于电脑和手机的超高清 4K 壁纸", searchPlaceholder: "在此搜索...", searchBtn: "搜索", catAll: "全部", catNature: "自然", catAnime: "动漫", catCars: "汽车", catAesthetic: "唯美", catDark: "黑暗" },
-  tr: { name: "Türkçe", title: "JennWall 4K Duvar Kağıtları", subtitle: "Masaüstünüz ve telefonunuz için ultra HD 4K duvar kağıtları indirin", searchPlaceholder: "Burada ara...", searchBtn: "Ara", catAll: "Tümü", catNature: "Doğa", catAnime: "Anime", catCars: "Arabalar", catAesthetic: "Estetik", catDark: "Koyu" },
-  ru: { name: "Русский", title: "JennWall 4K Обои", subtitle: "Скачивайте обои ultra HD 4K для ПК и телефона", searchPlaceholder: "Поиск...", searchBtn: "Искать", catAll: "Все", catNature: "Природа", catAnime: "Аниме", catCars: "Машины", catAesthetic: "Эстетика", catDark: "Темные" }
+  en: {
+    name: "English", siteLogo: "WallpaperHub", title: "JennWall 4K Wallpaper", subtitle: "Download ultra HD 4K wallpapers for your desktop & phone",
+    searchPlaceholder: "Search here...", searchBtn: "Search",
+    catAll: "All", catNature: "Nature", catAnime: "Anime", catCars: "Cars", catAesthetic: "Aesthetic", catDark: "Dark",
+    lblSort: "Sort By:", optRelevant: "Relevant", optLatest: "Latest",
+    lblColor: "Color:", optAllColors: "All Colors", optBW: "Black & White", optBlue: "Blue", optRed: "Red", optGreen: "Green", optYellow: "Yellow", optPurple: "Purple",
+    lblOrientation: "Orientation:", optAllOrientations: "All", optLandscape: "Landscape", optPortrait: "Portrait", optSquare: "Square",
+    loadingText: "Loading wallpapers...", btnDownload: "Download Original", btnFavorite: "Favorite", btnShare: "Share", relatedTitle: "Related Wallpapers",
+    shareTitle: "Share Wallpaper", shareSub: "Copy the link or share directly to social media:", btnCopy: "Copy",
+    menuHeading: "Menu", quickNav: "Quick Nav", settingsNav: "Settings & Info",
+    navHome: "Home", navGallery: "Gallery", navExplore: "Explore", navSettings: "Settings", navAbout: "About Us"
+  },
+  ur: {
+    name: "اردو", siteLogo: "وال پیپر ہب", title: "جین وال 4K وال پیپر", subtitle: "اپنے ڈیسک ٹاپ اور فون کے لیے الٹرا HD 4K وال پیپرز ڈاؤن لوڈ کریں",
+    searchPlaceholder: "یہاں تلاش کریں...", searchBtn: "تلاش کریں",
+    catAll: "سب", catNature: "قدرت", catAnime: "اینیم", catCars: "گاڑیاں", catAesthetic: "خوبصورت", catDark: "ڈارک",
+    lblSort: "ترتیب:", optRelevant: "متعلقہ", optLatest: "تازہ ترین",
+    lblColor: "رنگ:", optAllColors: "تمام رنگ", optBW: "سیاہ و سفید", optBlue: "نیلا", optRed: "سرخ", optGreen: "سبز", optYellow: "پیلا", optPurple: "جامنی",
+    lblOrientation: "رخ:", optAllOrientations: "تمام", optLandscape: "زمین کی سمت (Landscape)", optPortrait: "عمودی (Portrait)", optSquare: "مربع (Square)",
+    loadingText: "وال پیپرز لوڈ ہو رہے ہیں...", btnDownload: "اصل ڈاؤن لوڈ کریں", btnFavorite: "پسندیدہ", btnShare: "شیئر کریں", relatedTitle: "متعلقہ وال پیپرز",
+    shareTitle: "وال پیپر شیئر کریں", shareSub: "لنک کاپی کریں یا سوشل میڈیا پر شیئر کریں:", btnCopy: "کاپی کریں",
+    menuHeading: "مینو", quickNav: "فوری نیویگیشن", settingsNav: "سیٹنگز اور معلومات",
+    navHome: "ہوم", navGallery: "گیلری", navExplore: "ایکسپلور", navSettings: "سیٹنگز", navAbout: "ہمارے بارے میں"
+  },
+  hi: {
+    name: "हिन्दी", siteLogo: "वॉलपेपर हब", title: "जेनवॉल 4K वॉलपेपर", subtitle: "अपने डेस्कटॉप और फोन के लिए अल्ट्रा HD 4K वॉलपेपर डाउनलोड करें",
+    searchPlaceholder: "यहाँ खोजें...", searchBtn: "खोजें",
+    catAll: "सभी", catNature: "प्रकृति", catAnime: "एनिमे", catCars: "कारें", catAesthetic: "सुंदर", catDark: "डार्क",
+    lblSort: "क्रमानुसा‍र:", optRelevant: "प्रासंगिक", optLatest: "नवीनतम",
+    lblColor: "रंग:", optAllColors: "सभी रंग", optBW: "ब्लैक एंड व्हाइट", optBlue: "नीला", optRed: "लाल", optGreen: "हरा", optYellow: "पीला", optPurple: "बैंगनी",
+    lblOrientation: "दिशा:", optAllOrientations: "सभी", optLandscape: "लैंडस्केप", optPortrait: "पोर्ट्रेट", optSquare: "वर्ग",
+    loadingText: "वॉलपेपर लोड हो रहे हैं...", btnDownload: "मूल डाउनलोड करें", btnFavorite: "पसंदीदा", btnShare: "शेयर करें", relatedTitle: "संबंधित वॉलपेपर",
+    shareTitle: "वॉलपेपर शेयर करें", shareSub: "लिंक कॉपी करें या सीधे सोशल मीडिया पर शेयर करें:", btnCopy: "कॉपी करें",
+    menuHeading: "मेनू", quickNav: "त्वरित नेविगेशन", settingsNav: "सेटिंग्स और जानकारी",
+    navHome: "होम", navGallery: "गैलरी", navExplore: "एक्सप्लोर", navSettings: "सेटिंग्स", navAbout: "हमारे बारे में"
+  },
+  es: {
+    name: "Español", siteLogo: "WallpaperHub", title: "Fondo de Pantalla JennWall 4K", subtitle: "Descarga fondos de pantalla ultra HD 4K para tu PC y teléfono",
+    searchPlaceholder: "Buscar aquí...", searchBtn: "Buscar",
+    catAll: "Todo", catNature: "Naturaleza", catAnime: "Anime", catCars: "Coches", catAesthetic: "Estético", catDark: "Oscuro",
+    lblSort: "Ordenar:", optRelevant: "Relevante", optLatest: "Más reciente",
+    lblColor: "Color:", optAllColors: "Todos los colores", optBW: "Blanco y negro", optBlue: "Azul", optRed: "Rojo", optGreen: "Verde", optYellow: "Amarillo", optPurple: "Púrpura",
+    lblOrientation: "Orientación:", optAllOrientations: "Todas", optLandscape: "Horizontal", optPortrait: "Vertical", optSquare: "Cuadrado",
+    loadingText: "Cargando fondos...", btnDownload: "Descargar original", btnFavorite: "Favorito", btnShare: "Compartir", relatedTitle: "Fondos relacionados",
+    shareTitle: "Compartir fondo", shareSub: "Copia el enlace o comparte directamente:", btnCopy: "Copiar",
+    menuHeading: "Menú", quickNav: "Navegación rápida", settingsNav: "Ajustes e Info",
+    navHome: "Inicio", navGallery: "Galería", navExplore: "Explorar", navSettings: "Ajustes", navAbout: "Sobre nosotros"
+  },
+  fr: {
+    name: "Français", siteLogo: "WallpaperHub", title: "Fonds d'écran JennWall 4K", subtitle: "Téléchargez des fonds d'écran ultra HD 4K pour PC et mobile",
+    searchPlaceholder: "Rechercher...", searchBtn: "Chercher",
+    catAll: "Tout", catNature: "Nature", catAnime: "Animé", catCars: "Voitures", catAesthetic: "Esthétique", catDark: "Sombre",
+    lblSort: "Trier par:", optRelevant: "Pertinent", optLatest: "Plus récent",
+    lblColor: "Couleur:", optAllColors: "Toutes les couleurs", optBW: "Noir et blanc", optBlue: "Bleu", optRed: "Rouge", optGreen: "Vert", optYellow: "Jaune", optPurple: "Violet",
+    lblOrientation: "Orientation:", optAllOrientations: "Toutes", optLandscape: "Paysage", optPortrait: "Portrait", optSquare: "Carré",
+    loadingText: "Chargement...", btnDownload: "Télécharger l'original", btnFavorite: "Favori", btnShare: "Partager", relatedTitle: "Fonds d'écran associés",
+    shareTitle: "Partager le fond d'écran", shareSub: "Copiez le lien ou partagez directement :", btnCopy: "Copier",
+    menuHeading: "Menu", quickNav: "Navigation rapide", settingsNav: "Paramètres & Info",
+    navHome: "Accueil", navGallery: "Galerie", navExplore: "Explorer", navSettings: "Paramètres", navAbout: "À propos"
+  },
+  ar: {
+    name: "العربية", siteLogo: "وال بيبر هب", title: "خلفيات جين وال 4K", subtitle: "قم بتنزيل خلفيات فائقة الدقة 4K لجهاز الكمبيوتر والهاتف",
+    searchPlaceholder: "ابحث هنا...", searchBtn: "بحث",
+    catAll: "الكل", catNature: "طبيعة", catAnime: "أنيمي", catCars: "سيارات", catAesthetic: "جمالي", catDark: "داكن",
+    lblSort: "فرز حسب:", optRelevant: "ذو صلة", optLatest: "الأحدث",
+    lblColor: "اللون:", optAllColors: "جميع الألوان", optBW: "أبيض وأسود", optBlue: "أزرق", optRed: "أحمر", optGreen: "أخضر", optYellow: "أصفر", optPurple: "أرجواني",
+    lblOrientation: "الاتجاه:", optAllOrientations: "الكل", optLandscape: "أفقي", optPortrait: "عمودي", optSquare: "مربع",
+    loadingText: "جاري تحميل الخلفيات...", btnDownload: "تنزيل الأصلي", btnFavorite: "المفضلة", btnShare: "مشاركة", relatedTitle: "خلفيات ذات صلة",
+    shareTitle: "مشاركة الخلفية", shareSub: "انسخ الرابط أو شاركه مباشرة على وسائل التواصل الاجتماعي:", btnCopy: "نسخ",
+    menuHeading: "القائمة", quickNav: "التنقل السريع", settingsNav: "الإعدادات والمعلومات",
+    navHome: "الرئيسية", navGallery: "المعرض", navExplore: "استكشاف", navSettings: "الإعدادات", navAbout: "معلومات عنا"
+  },
+  de: {
+    name: "Deutsch", siteLogo: "WallpaperHub", title: "JennWall 4K Hintergrundbilder", subtitle: "Laden Sie Ultra HD 4K Hintergrundbilder für PC und Handy herunter",
+    searchPlaceholder: "Hier suchen...", searchBtn: "Suchen",
+    catAll: "Alle", catNature: "Natur", catAnime: "Anime", catCars: "Autos", catAesthetic: "Ästhetisch", catDark: "Dunkel",
+    lblSort: "Sortieren:", optRelevant: "Relevant", optLatest: "Neueste",
+    lblColor: "Farbe:", optAllColors: "Alle Farben", optBW: "Schwarz-Weiß", optBlue: "Blau", optRed: "Rot", optGreen: "Grün", optYellow: "Gelb", optPurple: "Lila",
+    lblOrientation: "Ausrichtung:", optAllOrientations: "Alle", optLandscape: "Querformat", optPortrait: "Hochformat", optSquare: "Quadratisch",
+    loadingText: "Lade Hintergrundbilder...", btnDownload: "Original herunterladen", btnFavorite: "Favorit", btnShare: "Teilen", relatedTitle: "Ähnliche Hintergrundbilder",
+    shareTitle: "Hintergrundbild teilen", shareSub: "Link kopieren oder direkt teilen:", btnCopy: "Kopieren",
+    menuHeading: "Menü", quickNav: "Schnellnavigation", settingsNav: "Einstellungen & Info",
+    navHome: "Startseite", navGallery: "Galerie", navExplore: "Entdecken", navSettings: "Einstellungen", navAbout: "Über uns"
+  },
+  zh: {
+    name: "中文", siteLogo: "壁纸中心", title: "JennWall 4K 壁纸", subtitle: "下载适用于电脑和手机的超高清 4K 壁纸",
+    searchPlaceholder: "在此搜索...", searchBtn: "搜索",
+    catAll: "全部", catNature: "自然", catAnime: "动漫", catCars: "汽车", catAesthetic: "唯美", catDark: "黑暗",
+    lblSort: "排序方式:", optRelevant: "相关度", optLatest: "最新",
+    lblColor: "颜色:", optAllColors: "所有颜色", optBW: "黑白", optBlue: "蓝色", optRed: "红色", optGreen: "绿色", optYellow: "黄色", optPurple: "紫色",
+    lblOrientation: "方向:", optAllOrientations: "全部", optLandscape: "横向", optPortrait: "纵向", optSquare: "正方形",
+    loadingText: "正在加载壁纸...", btnDownload: "下载原图", btnFavorite: "收藏", btnShare: "分享", relatedTitle: "相关壁纸",
+    shareTitle: "分享壁纸", shareSub: "复制链接或直接分享到社交平台：", btnCopy: "复制",
+    menuHeading: "菜单", quickNav: "快速导航", settingsNav: "设置与信息",
+    navHome: "首页", navGallery: "画廊", navExplore: "探索", navSettings: "设置", navAbout: "关于我们"
+  },
+  tr: {
+    name: "Türkçe", siteLogo: "WallpaperHub", title: "JennWall 4K Duvar Kağıtları", subtitle: "Masaüstünüz ve telefonunuz için ultra HD 4K duvar kağıtları indirin",
+    searchPlaceholder: "Burada ara...", searchBtn: "Ara",
+    catAll: "Tümü", catNature: "Doğa", catAnime: "Anime", catCars: "Arabalar", catAesthetic: "Estetik", catDark: "Koyu",
+    lblSort: "Sıralama:", optRelevant: "İlgili", optLatest: "En Yeni",
+    lblColor: "Renk:", optAllColors: "Tüm Renkler", optBW: "Siyah & Beyaz", optBlue: "Mavi", optRed: "Kırmızı", optGreen: "Yeşil", optYellow: "Sarı", optPurple: "Mor",
+    lblOrientation: "Yönelim:", optAllOrientations: "Tümü", optLandscape: "Yatay", optPortrait: "Dikey", optSquare: "Kare",
+    loadingText: "Duvar kağıtları yükleniyor...", btnDownload: "Orijinal Yükle", btnFavorite: "Favori", btnShare: "Paylaş", relatedTitle: "İlgili Duvar Kağıtları",
+    shareTitle: "Duvar Kağıdını Paylaş", shareSub: "Bağlantıyı kopyalayın veya doğrudan paylaşın:", btnCopy: "Kopyala",
+    menuHeading: "Menü", quickNav: "Hızlı Gezinme", settingsNav: "Ayarlar ve Bilgi",
+    navHome: "Ana Sayfa", navGallery: "Galeri", navExplore: "Keşfet", navSettings: "Ayarlar", navAbout: "Hakkımızda"
+  },
+  ru: {
+    name: "Русский", siteLogo: "WallpaperHub", title: "JennWall 4K Обои", subtitle: "Скачивайте обои ultra HD 4K для ПК и телефона",
+    searchPlaceholder: "Поиск...", searchBtn: "Искать",
+    catAll: "Все", catNature: "Природа", catAnime: "Аниме", catCars: "Машины", catAesthetic: "Эстетика", catDark: "Темные",
+    lblSort: "Сортировка:", optRelevant: "По релевантности", optLatest: "Сначала новые",
+    lblColor: "Цвет:", optAllColors: "Все цвета", optBW: "Черно-белые", optBlue: "Синий", optRed: "Красный", optGreen: "Зеленый", optYellow: "Желтый", optPurple: "Фиолетовый",
+    lblOrientation: "Ориентация:", optAllOrientations: "Все", optLandscape: "Альбомная", optPortrait: "Портретная", optSquare: "Квадратная",
+    loadingText: "Загрузка обоев...", btnDownload: "Скачать оригинал", btnFavorite: "Избранное", btnShare: "Поделиться", relatedTitle: "Похожие обои",
+    shareTitle: "Поделиться обоями", shareSub: "Скопируйте ссылку или поделитесь в соцсетях:", btnCopy: "Копировать",
+    menuHeading: "Меню", quickNav: "Быстрая навигация", settingsNav: "Настройки и инфо",
+    navHome: "Главная", navGallery: "Галерея", navExplore: "Обзор", navSettings: "Настройки", navAbout: "О нас"
+  }
 };
-
 const langKeys = Object.keys(translations);
 let currentLang = localStorage.getItem('site_lang') || 'en';
 
@@ -84,7 +194,7 @@ const langDetails = {
 };
 
 // ==========================================
-// 🌐 POPUP DROPDOWN (LIKE SCREENSHOT)
+// 🌐 POPUP DROPDOWN (DYNAMIC POSITIONING FIX)
 // ==========================================
 function toggleLanguage(e) {
   if (e) e.stopPropagation();
@@ -120,12 +230,33 @@ function toggleLanguage(e) {
 
   langBox.innerHTML = `<div class="lang-popup-inner">${listHTML}</div>`;
 
+  document.body.appendChild(langBox);
+
   const btn = e ? e.currentTarget : document.getElementById('langToggleBtn');
+  const isRtl = document.body.dir === 'rtl';
+
   if (btn) {
-    btn.parentNode.style.position = 'relative';
-    btn.parentNode.appendChild(langBox);
-  } else {
-    document.body.appendChild(langBox);
+    const rect = btn.getBoundingClientRect();
+    langBox.style.position = 'fixed';
+    
+    if (isRtl) {
+      langBox.style.right = `${window.innerWidth - rect.left + 10}px`;
+      langBox.style.left = 'auto';
+    } else {
+      langBox.style.left = `${rect.right + 10}px`;
+      langBox.style.right = 'auto';
+    }
+
+    const bottomSpace = window.innerHeight - rect.bottom;
+    if (bottomSpace < 220) {
+      langBox.style.bottom = '10px';
+      langBox.style.top = 'auto';
+    } else {
+      langBox.style.top = `${rect.top}px`;
+      langBox.style.bottom = 'auto';
+    }
+
+    langBox.style.zIndex = '999999';
   }
 }
 
@@ -140,10 +271,10 @@ function closeLanguageDropdown() {
   if (langBox) langBox.remove();
 }
 
-// Outside click par box close karna
 document.addEventListener('click', (e) => {
   const langBox = document.getElementById('langDropdownBox');
-  if (langBox && !langBox.contains(e.target)) {
+  const langBtn = document.getElementById('langToggleBtn');
+  if (langBox && !langBox.contains(e.target) && (!langBtn || !langBtn.contains(e.target))) {
     closeLanguageDropdown();
   }
 });
@@ -240,15 +371,17 @@ function toggleFavorite(photo) {
     const detailFavBtn = document.getElementById('detailFavBtn');
     if (detailFavBtn) {
       const isFavNow = favorites.some(item => item.id === photo.id);
+      const favTxt = translations[currentLang]?.btnFavorite || "Favorite";
       detailFavBtn.innerHTML = isFavNow 
-        ? '<i class="fa-solid fa-heart" style="color: #ff4757;"></i> Favorited' 
-        : '<i class="fa-regular fa-heart"></i> Favorite';
+        ? `<i class="fa-solid fa-heart" style="color: #ff4757;"></i> ${favTxt}` 
+        : `<i class="fa-regular fa-heart"></i> ${favTxt}`;
     }
   }
 }
 
 function showFavorites() {
   isFavoritesView = true;
+  isLiveWallpaperMode = false;
   gallery.innerHTML = '';
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
 
@@ -359,9 +492,10 @@ function openWallpaperDetail(photo) {
 
   if (detailFavBtn) {
     const isFav = favorites.some(item => item.id === photo.id);
+    const favTxt = translations[currentLang]?.btnFavorite || "Favorite";
     detailFavBtn.innerHTML = isFav 
-      ? '<i class="fa-solid fa-heart" style="color: #ff4757;"></i> Favorited' 
-      : '<i class="fa-regular fa-heart"></i> Favorite';
+      ? `<i class="fa-solid fa-heart" style="color: #ff4757;"></i> ${favTxt}` 
+      : `<i class="fa-regular fa-heart"></i> ${favTxt}`;
 
     detailFavBtn.onclick = (e) => {
       e.stopPropagation();
@@ -414,12 +548,19 @@ function renderCard(photo) {
   if (!gallery) return;
   const card = document.createElement('div');
   card.classList.add('card');
+  if (isLiveWallpaperMode) card.classList.add('live-card');
 
   const isFav = favorites.some(item => item.id === photo.id);
   const titleName = photo.alt ? photo.alt.replace(/[^a-zA-Z0-9]/g, "_") : `wallpaper_${photo.id}`;
 
+  const liveBadgeHTML = isLiveWallpaperMode ? `
+    <div style="position: absolute; top: 12px; left: 12px; z-index: 5; background: rgba(0, 0, 0, 0.65); color: #00f2fe; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; display: flex; align-items: center; gap: 5px; backdrop-filter: blur(4px); border: 1px solid rgba(0,242,254,0.3);">
+      <i class="fa-solid fa-circle-play" style="font-size: 0.8rem; animation: pulse 1.5s infinite;"></i> LIVE 4K
+    </div>` : '';
+
   card.innerHTML = `
-    <img src="${photo.src.large}" alt="${photo.alt || 'Wallpaper'}" loading="lazy" />
+    ${liveBadgeHTML}
+    <img src="${photo.src.large}" alt="${photo.alt || 'Wallpaper'}" loading="lazy" style="${isLiveWallpaperMode ? 'transition: transform 8s ease-in-out; transform: scale(1.05);' : ''}" />
     <div class="overlay">
       <span class="photographer"><i class="fa-regular fa-user"></i> ${photo.photographer}</span>
       <div class="action-btns">
@@ -435,6 +576,17 @@ function renderCard(photo) {
       </div>
     </div>
   `;
+
+  if (isLiveWallpaperMode) {
+    card.addEventListener('mouseenter', () => {
+      const img = card.querySelector('img');
+      if (img) img.style.transform = 'scale(1.25) rotate(1deg)';
+    });
+    card.addEventListener('mouseleave', () => {
+      const img = card.querySelector('img');
+      if (img) img.style.transform = 'scale(1.05)';
+    });
+  }
 
   card.onclick = () => openWallpaperDetail(photo);
   gallery.appendChild(card);
@@ -534,9 +686,9 @@ function filterCategory(categoryName, event) {
 }
 
 // ==========================================
-// 🚀 NAVIGATION VIEWS
+// 🚀 NAVIGATION VIEWS & SIDEBAR MENU
 // ==========================================
-function setActiveNav(elementId) {
+function updateActiveNav(elementId) {
   document.querySelectorAll('.sidebar .nav-icon').forEach(icon => icon.classList.remove('active'));
   const activeElem = document.getElementById(elementId);
   if (activeElem) activeElem.classList.add('active');
@@ -544,160 +696,77 @@ function setActiveNav(elementId) {
 
 function showHomeView(e) {
   if (e) e.preventDefault();
-  setActiveNav('navHome');
+  updateActiveNav('navHome');
   isFavoritesView = false;
+  isLiveWallpaperMode = false;
   const heroSection = document.querySelector('.hero-section');
   if (heroSection) heroSection.style.display = 'block';
+  currentQuery = '4k wallpaper';
   resetGallery();
-  fetchWallpapers('nature', 1);
+  fetchWallpapers(currentQuery, 1);
+  showToast("Showing Home Feed");
 }
 
 function showGalleryView(e) {
   if (e) e.preventDefault();
-  setActiveNav('navGallery');
+  updateActiveNav('navGallery');
   isFavoritesView = false;
+  isLiveWallpaperMode = false;
   const heroSection = document.querySelector('.hero-section');
   if (heroSection) heroSection.style.display = 'none';
+  currentQuery = 'hd wallpapers';
   resetGallery();
-  fetchWallpapers('aesthetic', 1);
+  fetchWallpapers(currentQuery, 1);
+  showToast("Showing Wallpapers Gallery");
 }
 
 function showVideosView(e) {
   if (e) e.preventDefault();
-  setActiveNav('navVideos');
-  isFavoritesView = true;
-  const heroSection = document.querySelector('.hero-section');
-  if (heroSection) heroSection.style.display = 'none';
-
-  if (gallery) {
-    gallery.innerHTML = `
-      <div class="empty-view-state">
-        <i class="fa-regular fa-circle-play"></i>
-        <h3>Live & Video Wallpapers</h3>
-        <p>Video wallpapers feature is coming soon to JennWall!</p>
-      </div>
-    `;
-  }
-}
-
-function showExploreView(e) {
-  if (e) e.preventDefault();
-  setActiveNav('navExplore');
+  updateActiveNav('navVideos');
   isFavoritesView = false;
+  isLiveWallpaperMode = true; // Activate Live Mode
+
   const heroSection = document.querySelector('.hero-section');
   if (heroSection) heroSection.style.display = 'none';
 
-  const randomTerms = ['space', 'neon', 'abstract', 'cyberpunk', 'architecture', 'minimalist'];
-  const randomQuery = randomTerms[Math.floor(Math.random() * randomTerms.length)];
-
+  currentQuery = 'live cinematic motion background';
   resetGallery();
-  fetchWallpapers(randomQuery, 1);
-}
-
-function showDownloadsView(e) {
-  if (e) e.preventDefault();
-  setActiveNav('navDownloads');
-  isFavoritesView = true;
-  const heroSection = document.querySelector('.hero-section');
-  if (heroSection) heroSection.style.display = 'none';
-
-  if (!gallery) return;
-  gallery.innerHTML = '';
-  if (!downloadHistory || downloadHistory.length === 0) {
-    gallery.innerHTML = `
-      <div class="empty-view-state">
-        <i class="fa-solid fa-download"></i>
-        <h3>No Downloads Yet</h3>
-        <p>Wallpapers you download will appear here in your local history!</p>
-      </div>
-    `;
-    return;
-  }
-
-  downloadHistory.forEach(item => {
-    const photo = {
-      id: item.id || Date.now(),
-      src: { large: item.url, original: item.url, large2x: item.url },
-      photographer: item.name || 'Downloaded Image',
-      alt: item.name || 'Downloaded Wallpaper'
-    };
-    renderCard(photo);
-  });
-}
-
-function showBookmarksView(e) {
-  if (e) e.preventDefault();
-  setActiveNav('navBookmarks');
-  isFavoritesView = true;
-  const heroSection = document.querySelector('.hero-section');
-  if (heroSection) heroSection.style.display = 'none';
-
-  if (!gallery) return;
-  gallery.innerHTML = '';
-  if (!favorites || favorites.length === 0) {
-    gallery.innerHTML = `
-      <div class="empty-view-state">
-        <i class="fa-regular fa-bookmark"></i>
-        <h3>No Bookmarks Saved</h3>
-        <p>Click the heart icon on any wallpaper to add it to your bookmarks collection!</p>
-      </div>
-    `;
-    return;
-  }
-
-  favorites.forEach(photo => renderCard(photo));
+  fetchWallpapers(currentQuery, 1);
+  showToast("Showing Live 4K Wallpapers 🎬");
 }
 
 // ==========================================
-// 🎯 LISTENERS & INITIALIZATION
+// 🔄 INFINITE SCROLL & EVENT LISTENERS
 // ==========================================
-updateFavCount();
-
-if (themeToggleBtn) {
-  themeToggleBtn.addEventListener('click', () => {
-    document.body.classList.toggle('light-mode');
-    const isLight = document.body.classList.contains('light-mode');
-    themeToggleBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-  });
-}
-
-if (searchInput) {
-  searchInput.addEventListener('focus', () => {
-    renderRecentSearches();
-    if (recentSearches.length > 0 && recentSearchesContainer) recentSearchesContainer.classList.add('show');
-  });
-  searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
-}
-
-if (searchBtn) searchBtn.addEventListener('click', handleSearch);
-
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.search-box') && recentSearchesContainer) {
-    recentSearchesContainer.classList.remove('show');
-  }
-});
-
 window.addEventListener('scroll', () => {
-  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-  if (scrollTop + clientHeight >= scrollHeight - 800) {
-    if (!isLoading && hasMore && !isFavoritesView) {
+  if (isFavoritesView) return;
+  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 800) {
+    if (!isLoading && hasMore) {
       currentPage++;
       fetchWallpapers(currentQuery, currentPage);
     }
   }
 });
 
-window.addEventListener('click', (e) => {
-  const shareModal = document.getElementById('shareModal');
-  const detailModal = document.getElementById('wallpaperDetailModal');
-  const langModal = document.getElementById('languageModal');
+// Search Triggers
+if (searchBtn) searchBtn.addEventListener('click', handleSearch);
+if (searchInput) {
+  searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleSearch();
+  });
+  searchInput.addEventListener('focus', renderRecentSearches);
+  searchInput.addEventListener('input', () => {
+    if (searchInput.value.trim() === '') {
+      renderRecentSearches();
+    } else if (recentSearchesContainer) {
+      recentSearchesContainer.classList.remove('show');
+    }
+  });
+}
 
-  if (e.target === shareModal) closeShareModal();
-  if (e.target === detailModal) closeWallpaperDetail();
-  if (e.target === langModal) closeLanguageModal();
-});
-
+// Initial Setup
 document.addEventListener('DOMContentLoaded', () => {
   applyLanguage(currentLang);
+  updateFavCount();
   fetchWallpapers(currentQuery, currentPage);
 });
