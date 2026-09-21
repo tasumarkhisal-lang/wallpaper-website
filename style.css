@@ -1390,3 +1390,34 @@ html[lang="ar"] .side-drawer.active {
   transform: translateY(-2px) !important;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
 }
+/* ==========================================
+   🌐 LANGUAGE DROPDOWN / MODAL RTL FIX
+   ========================================== */
+
+/* Language Menu Box Alignment Fix */
+.language-dropdown,
+.lang-dropdown,
+.language-menu,
+#languageModal,
+.lang-select-box {
+  left: 20px !important;
+  right: auto !important;
+  direction: ltr !important; /* Ensure flags and names stay left-aligned inside dropdown */
+  text-align: left !important;
+  max-width: 250px !important;
+  z-index: 99999 !important;
+}
+
+/* Sidebar Dropdown Fix inside Mobile Nav */
+html[dir="rtl"] .sidebar .language-dropdown,
+html[dir="rtl"] .nav-menu .language-dropdown,
+[dir="rtl"] .language-box {
+  left: 15px !important;
+  right: auto !important;
+  transform: none !important;
+}
+
+/* Ensure mobile sidebar keeps full layout visible */
+.sidebar, .nav-menu {
+  overflow-x: visible !important;
+}
