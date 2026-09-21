@@ -429,7 +429,7 @@ body[dir="rtl"] .recent-searches {
 .icon-btn:hover { background: #3b82f6; }
 .icon-btn.liked { color: #ff4757; }
 
-/* 🌟 LIVE IMAGE BADGE (For Image Wallpapers) */
+/* 🌟 LIVE IMAGE BADGE */
 .live-tag {
   position: absolute;
   top: 12px;
@@ -807,6 +807,6 @@ body.light-mode .drawer-header {
   gap: 12px;
   padding: 10px 0;
   color: inherit;
-  text-decoration: none;
+  text-decoration: none
   font-size: 0.95rem;
 }
