@@ -312,9 +312,6 @@ function showToast(message) {
   setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
 }
 
-function updateFavCount() {
-  if (favCounter) favCounter.innerText = `(${favorites.length})`;
-}
 
 // ==========================================
 // 📥 DOWNLOAD & FAVORITES LOGIC
@@ -768,16 +765,7 @@ function showBookmarksView(e) {
   updateActiveNav('navBookmarks');
   showFavorites();
 }
-function toggleSidebarMenu(e) {
-    if (e) e.preventDefault();
-    const drawer = document.getElementById('sideDrawer');
-    const overlay = document.getElementById('menuOverlay');
 
-    if (drawer && overlay) {
-        drawer.classList.toggle('active');
-        overlay.classList.toggle('active');
-    }
-}
 // ==========================================
 // 🌙 THEME TOGGLE & INITIALIZATION
 // ==========================================
