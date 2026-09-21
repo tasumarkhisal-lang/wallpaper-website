@@ -768,13 +768,12 @@ function showBookmarksView(e) {
   updateActiveNav('navBookmarks');
   showFavorites();
 }
-
 function toggleSidebarMenu(e) {
-    if(e) e.preventDefault();
+    if (e) e.preventDefault();
     const drawer = document.getElementById('sideDrawer');
     const overlay = document.getElementById('menuOverlay');
-    
-    if(drawer && overlay) {
+
+    if (drawer && overlay) {
         drawer.classList.toggle('active');
         overlay.classList.toggle('active');
     }

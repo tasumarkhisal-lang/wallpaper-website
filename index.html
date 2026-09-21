@@ -192,28 +192,52 @@
         </div>
     </div>
 
-    <!-- Slide-out Menu Overlay & Drawer -->
-    <div id="menuOverlay" class="menu-overlay" onclick="toggleSidebarMenu(event)"></div>
-
-    <div id="sideDrawer" class="side-drawer">
-        <div class="drawer-header">
-            <h3><i class="fa-solid fa-bars"></i> <span data-key="menuHeading">Menu</span></h3>
-            <button class="close-drawer-btn" onclick="toggleSidebarMenu(event)">&times;</button>
+   <!-- Slide-out Left Drawer Panel -->
+<div id="sideDrawer" class="side-drawer">
+    <div class="drawer-header">
+        <div class="logo">
+            <i class="fa-solid fa-wand-magic-sparkles logo-icon"></i>
+            <span>WallpaperHub</span>
         </div>
-        <div class="drawer-content">
-            <div class="drawer-section">
-                <h4 data-key="quickNav">Quick Nav</h4>
-                <a href="#" onclick="showHomeView(event); toggleSidebarMenu(event);"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-key="navHome">Home</span></a>
-                <a href="#" onclick="showGalleryView(event); toggleSidebarMenu(event);"><i class="fa-regular fa-image"></i> <span data-key="navGallery">Gallery</span></a>
-                <a href="#" onclick="showExploreView(event); toggleSidebarMenu(event);"><i class="fa-regular fa-compass"></i> <span data-key="navExplore">Explore</span></a>
-            </div>
-            <div class="drawer-section">
-                <h4 data-key="settingsNav">Settings & Info</h4>
-                <a href="#" onclick="showToast('Settings coming soon!'); toggleSidebarMenu(event);"><i class="fa-solid fa-gear"></i> <span data-key="navSettings">Settings</span></a>
-                <a href="#" onclick="showToast('WallpaperHub v1.0'); toggleSidebarMenu(event);"><i class="fa-solid fa-circle-info"></i> <span data-key="navAbout">About Us</span></a>
-            </div>
-        </div>
+        <button class="close-drawer-btn" onclick="toggleSidebarMenu(event)">&times;</button>
     </div>
+    
+    <div class="drawer-content">
+        <a href="#" class="drawer-item" onclick="showHomeView(event); toggleSidebarMenu(event);">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Home</span>
+        </a>
+        <a href="#" class="drawer-item" onclick="showGalleryView(event); toggleSidebarMenu(event);">
+            <i class="fa-regular fa-image"></i> <span>Gallery</span>
+        </a>
+        <a href="#" class="drawer-item" onclick="showVideosView(event); toggleSidebarMenu(event);">
+            <i class="fa-regular fa-circle-play"></i> <span>Live Wallpapers</span>
+        </a>
+        <a href="#" class="drawer-item" onclick="showExploreView(event); toggleSidebarMenu(event);">
+            <i class="fa-regular fa-compass"></i> <span>Explore</span>
+        </a>
+        <a href="#" class="drawer-item" onclick="showDownloadsView(event); toggleSidebarMenu(event);">
+            <i class="fa-solid fa-download"></i> <span>Downloads</span>
+        </a>
+        <a href="#" class="drawer-item" onclick="showBookmarksView(event); toggleSidebarMenu(event);">
+            <i class="fa-regular fa-bookmark"></i> <span>Bookmarks</span>
+        </a>
+        
+        <hr class="drawer-divider">
+
+        <a href="login.html" class="drawer-item">
+            <i class="fa-regular fa-user"></i> <span>Account</span>
+        </a>
+        <a href="#" class="drawer-item" onclick="toggleLanguage(event)">
+            <i class="fa-solid fa-language"></i> <span>Language</span>
+        </a>
+        <a href="#" class="drawer-item" onclick="showToast('Settings coming soon!'); toggleSidebarMenu(event);">
+            <i class="fa-solid fa-gear"></i> <span>Settings</span>
+        </a>
+    </div>
+</div>
+
+<!-- Backdrop Overlay -->
+<div id="menuOverlay" class="menu-overlay" onclick="toggleSidebarMenu(event)"></div>
 
     <script src="script.js"></script>
 </body>
