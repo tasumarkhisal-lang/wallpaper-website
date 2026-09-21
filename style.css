@@ -1036,3 +1036,208 @@ body.light-mode .drawer-header {
     margin-bottom: 8px !important;
   }
 }
+/* ==========================================
+   🎯 EXPANDABLE SIDEBAR & DRAWER FIXES
+   ========================================== */
+
+/* Fixed Vertical Left Strip */
+.sidebar {
+  width: 60px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #0b0f17;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  z-index: 1000;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.main-wrapper {
+  margin-left: 60px;
+  width: calc(100% - 60px);
+}
+
+/* Slide-Out Drawer Overlay Panel */
+.side-drawer {
+  position: fixed;
+  top: 0;
+  left: -280px; /* Hide off screen */
+  width: 250px;
+  height: 100vh;
+  background-color: #121826;
+  z-index: 99999;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.side-drawer.active {
+  left: 0 !important; /* Slide in on click */
+}
+
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 99998;
+  display: none;
+}
+
+.menu-overlay.active {
+  display: block;
+}
+
+/* Drawer UI Elements */
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 15px;
+}
+
+.close-drawer-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.drawer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #a0aec0;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.drawer-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.drawer-item i {
+  width: 20px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.drawer-divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 10px 0;
+}
+
+/* Mobile Responsiveness Adjustment */
+@media (max-width: 768px) {
+  .sidebar {
+    display: flex !important;
+  }
+}
+/* ==========================================
+   📱 PERFECT RESPONSIVE & OVERFLOW FIX
+   ========================================== */
+
+/* Universal Reset to stop horizontal scroll */
+* {
+  box-sizing: border-box !important;
+}
+
+html, body {
+  width: 100% !important;
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+@media (max-width: 768px) {
+  /* Hide static left strip on mobile */
+  .sidebar {
+    display: none !important;
+  }
+
+  /* Reset main wrapper width and margins */
+  .main-wrapper {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding: 0 !important;
+  }
+
+  /* Header Fit */
+  .navbar {
+    width: 100% !important;
+    padding: 10px 12px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+
+  .logo-text {
+    font-size: 1.1rem !important;
+  }
+
+  /* Hero Section Title Fix */
+  .hero-section {
+    width: 100% !important;
+    padding: 15px 12px !important;
+    text-align: center !important;
+  }
+
+  .hero-title {
+    font-size: 1.5rem !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .hero-subtitle {
+    font-size: 0.85rem !important;
+  }
+
+  /* Search Box Fit */
+  .search-box {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Gallery Grid Fit */
+  .gallery-container {
+    width: 100% !important;
+    padding: 8px !important;
+  }
+
+  .gallery {
+    column-count: 2 !important;
+    column-gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .card {
+    margin-bottom: 8px !important;
+  }
+}
