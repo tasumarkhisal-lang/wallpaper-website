@@ -149,7 +149,7 @@ const translations = {
     lblOrientation: "Ориентация:", optAllOrientations: "Все", optLandscape: "Альбомная", optPortrait: "Портретная", optSquare: "Квадратная",
     loadingText: "Загрузка обоев...", btnDownload: "Скачать оригинал", btnFavorite: "Избранное", btnShare: "Поделиться", relatedTitle: "Похожие обои",
     shareTitle: "Поделиться обоями", shareSub: "Скопируйте ссылку или поделитесь в соцсетях:", btnCopy: "Копировать",
-    menuHeading: "Меню", quickNav: "Быстрая навигация", settingsNav: "Настройки и инфо",
+    menuHeading: "Главная", quickNav: "Быстрая навигация", settingsNav: "Настройки и инфо",
     navHome: "Главная", navGallery: "Галерея", navExplore: "Обзор", navSettings: "Настройки", navAbout: "О нас"
   }
 };
@@ -382,16 +382,18 @@ function toggleFavorite(photo) {
 function showFavorites() {
   isFavoritesView = true;
   isLiveWallpaperMode = false;
-  gallery.innerHTML = '';
+  if (gallery) gallery.innerHTML = '';
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
 
   if (favorites.length === 0) {
-    gallery.innerHTML = `
-      <div class="empty-view-state">
-        <i class="fa-regular fa-heart"></i>
-        <h3>No Favorites Yet</h3>
-        <p>Click on the heart icon on any wallpaper to save it here.</p>
-      </div>`;
+    if (gallery) {
+      gallery.innerHTML = `
+        <div class="empty-view-state">
+          <i class="fa-regular fa-heart"></i>
+          <h3>No Favorites Yet</h3>
+          <p>Click on the heart icon on any wallpaper to save it here.</p>
+        </div>`;
+    }
     return;
   }
 
@@ -459,7 +461,7 @@ function renderRecentSearches() {
     chip.className = 'recent-chip';
     chip.innerHTML = `${term}`;
     chip.onclick = () => {
-      searchInput.value = term;
+      if (searchInput) searchInput.value = term;
       recentSearchesContainer.classList.remove('show');
       handleSearch();
     };
@@ -620,7 +622,7 @@ async function fetchWallpapers(query, page = 1) {
     const rawPhotos = Array.isArray(data) ? data : (data.results || []);
 
     if (rawPhotos.length === 0 && page === 1) {
-      gallery.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No wallpapers found matching filters!</p>';
+      if (gallery) gallery.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No wallpapers found matching filters!</p>';
       isLoading = false;
       return;
     }
@@ -696,77 +698,143 @@ function updateActiveNav(elementId) {
 
 function showHomeView(e) {
   if (e) e.preventDefault();
-  updateActiveNav('navHome');
-  isFavoritesView = false;
   isLiveWallpaperMode = false;
-  const heroSection = document.querySelector('.hero-section');
-  if (heroSection) heroSection.style.display = 'block';
+  updateActiveNav('navHome');
   currentQuery = '4k wallpaper';
   resetGallery();
-  fetchWallpapers(currentQuery, 1);
-  showToast("Showing Home Feed");
+  fetchWallpapers(currentQuery, currentPage);
 }
 
 function showGalleryView(e) {
   if (e) e.preventDefault();
-  updateActiveNav('navGallery');
-  isFavoritesView = false;
   isLiveWallpaperMode = false;
-  const heroSection = document.querySelector('.hero-section');
-  if (heroSection) heroSection.style.display = 'none';
-  currentQuery = 'hd wallpapers';
+  updateActiveNav('navGallery');
+  currentQuery = 'hd wallpaper';
   resetGallery();
-  fetchWallpapers(currentQuery, 1);
-  showToast("Showing Wallpapers Gallery");
+  fetchWallpapers(currentQuery, currentPage);
 }
 
 function showVideosView(e) {
   if (e) e.preventDefault();
+  isLiveWallpaperMode = true;
   updateActiveNav('navVideos');
-  isFavoritesView = false;
-  isLiveWallpaperMode = true; // Activate Live Mode
-
-  const heroSection = document.querySelector('.hero-section');
-  if (heroSection) heroSection.style.display = 'none';
-
-  currentQuery = 'live cinematic motion background';
+  currentQuery = 'live 4k wallpaper animated';
   resetGallery();
-  fetchWallpapers(currentQuery, 1);
-  showToast("Showing Live 4K Wallpapers 🎬");
+  fetchWallpapers(currentQuery, currentPage);
+  showToast("🎬 Live 4K Mode Activated!");
 }
 
+function showExploreView(e) {
+  if (e) e.preventDefault();
+  isLiveWallpaperMode = false;
+  updateActiveNav('navExplore');
+  currentQuery = 'aesthetic desktop backgrounds';
+  resetGallery();
+  fetchWallpapers(currentQuery, currentPage);
+}
+
+function showDownloadsView(e) {
+  if (e) e.preventDefault();
+  isLiveWallpaperMode = false;
+  updateActiveNav('navDownloads');
+  isFavoritesView = true;
+  if (gallery) gallery.innerHTML = '';
+
+  if (downloadHistory.length === 0) {
+    if (gallery) {
+      gallery.innerHTML = `
+        <div class="empty-view-state">
+          <i class="fa-solid fa-download"></i>
+          <h3>No Downloads Yet</h3>
+          <p>Downloaded wallpapers will appear here for quick access.</p>
+        </div>`;
+    }
+    return;
+  }
+
+  downloadHistory.forEach(item => {
+    const photo = {
+      id: item.id || Date.now(),
+      src: { large: item.url, original: item.url },
+      photographer: item.name || 'Downloaded Image',
+      alt: item.name || 'Wallpaper'
+    };
+    renderCard(photo);
+  });
+}
+
+function showBookmarksView(e) {
+  if (e) e.preventDefault();
+  updateActiveNav('navBookmarks');
+  showFavorites();
+}
+
+function toggleSidebarMenu(e) {
+    if(e) e.preventDefault();
+    const drawer = document.getElementById('sideDrawer');
+    const overlay = document.getElementById('menuOverlay');
+    
+    if(drawer && overlay) {
+        drawer.classList.toggle('active');
+        overlay.classList.toggle('active');
+    }
+}
 // ==========================================
-// 🔄 INFINITE SCROLL & EVENT LISTENERS
+// 🌙 THEME TOGGLE & INITIALIZATION
 // ==========================================
+if (themeToggleBtn) {
+  themeToggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('light-mode');
+    const isLight = document.body.classList.contains('light-mode');
+    themeToggleBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+    localStorage.setItem('site_theme', isLight ? 'light' : 'dark');
+  });
+}
+
+// Search Listeners
+if (searchBtn) searchBtn.addEventListener('click', handleSearch);
+if (searchInput) {
+  searchInput.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') handleSearch();
+  });
+  searchInput.addEventListener('focus', () => {
+    renderRecentSearches();
+    if (recentSearches.length > 0 && recentSearchesContainer) {
+      recentSearchesContainer.classList.add('show');
+    }
+  });
+}
+
+// Close Recent Searches Box on Outside Click
+document.addEventListener('click', (e) => {
+  if (recentSearchesContainer && !recentSearchesContainer.contains(e.target) && e.target !== searchInput) {
+    recentSearchesContainer.classList.remove('show');
+  }
+});
+
+// Infinite Scroll
 window.addEventListener('scroll', () => {
-  if (isFavoritesView) return;
-  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 800) {
-    if (!isLoading && hasMore) {
+  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+    if (!isLoading && hasMore && !isFavoritesView) {
       currentPage++;
       fetchWallpapers(currentQuery, currentPage);
     }
   }
 });
 
-// Search Triggers
-if (searchBtn) searchBtn.addEventListener('click', handleSearch);
-if (searchInput) {
-  searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') handleSearch();
-  });
-  searchInput.addEventListener('focus', renderRecentSearches);
-  searchInput.addEventListener('input', () => {
-    if (searchInput.value.trim() === '') {
-      renderRecentSearches();
-    } else if (recentSearchesContainer) {
-      recentSearchesContainer.classList.remove('show');
-    }
-  });
-}
-
-// Initial Setup
+// App Initialization
 document.addEventListener('DOMContentLoaded', () => {
+  // Restore Theme
+  const savedTheme = localStorage.getItem('site_theme');
+  if (savedTheme === 'light') {
+    document.body.classList.add('light-mode');
+    if (themeToggleBtn) themeToggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+  }
+
+  // Restore Language & Favorites Count
   applyLanguage(currentLang);
   updateFavCount();
+
+  // Initial Fetch
   fetchWallpapers(currentQuery, currentPage);
 });

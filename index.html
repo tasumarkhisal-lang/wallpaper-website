@@ -45,24 +45,31 @@
     <!-- Main Wrapper -->
     <div class="main-wrapper">
         
-        <!-- Header Navigation -->
-        <header class="navbar">
-            <div class="logo">
-                <i class="fa-solid fa-wand-magic-sparkles logo-icon"></i>
-                <span class="logo-text" data-key="siteLogo">WallpaperHub</span>
-            </div>
-            <div class="nav-actions">
-                <button class="nav-btn fav-badge-btn" onclick="showFavorites()" id="favCountBtn" title="Favorites">
-                    <i class="fa-solid fa-heart"></i> <span id="favCounter">(0)</span>
-                </button>
-                <button class="nav-btn" id="themeToggleBtn" title="Toggle Theme">
-                    <i class="fa-solid fa-moon"></i>
-                </button>
-                <a href="login.html" class="login-btn-nav" title="Login / Profile">
-                    <i class="fa-solid fa-user"></i>
-                </a>
-            </div>
-        </header>
+       <!-- Header Navigation -->
+<header class="navbar">
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <!-- Mobile Menu Toggle Button -->
+        <button class="nav-btn mobile-menu-btn" onclick="toggleSidebarMenu(event)" title="Menu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="logo">
+            <i class="fa-solid fa-wand-magic-sparkles logo-icon"></i>
+            <span class="logo-text" data-key="siteLogo">WallpaperHub</span>
+        </div>
+    </div>
+    
+    <div class="nav-actions">
+        <button class="nav-btn fav-badge-btn" onclick="showFavorites()" id="favCountBtn" title="Favorites">
+            <i class="fa-solid fa-heart"></i> <span id="favCounter">(0)</span>
+        </button>
+        <button class="nav-btn" id="themeToggleBtn" title="Toggle Theme">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+        <a href="login.html" class="login-btn-nav" title="Login / Profile">
+            <i class="fa-solid fa-user"></i>
+        </a>
+    </div>
+</header>
 
         <!-- Main Hero Section -->
         <section class="hero-section">
