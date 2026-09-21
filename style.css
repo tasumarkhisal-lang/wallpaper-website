@@ -1241,3 +1241,39 @@ html, body {
     margin-bottom: 8px !important;
   }
 }
+/* ==========================================
+   🌐 RTL FIX FOR URDU & ARABIC
+   ========================================== */
+
+/* RTL Mode me Side Drawer ko Left par hi Fixed Rakhne ke Liye */
+[dir="rtl"] .side-drawer,
+html[lang="ur"] .side-drawer,
+html[lang="ar"] .side-drawer {
+  left: -280px !important;
+  right: auto !important;
+  text-align: right !important;
+}
+
+[dir="rtl"] .side-drawer.active,
+html[lang="ur"] .side-drawer.active,
+html[lang="ar"] .side-drawer.active {
+  left: 0 !important;
+  right: auto !important;
+}
+
+/* Language Popup Box Center Alignment Fix */
+[dir="rtl"] #langDropdown,
+[dir="rtl"] .lang-dropdown,
+[dir="rtl"] .language-menu {
+  left: 50% !important;
+  right: auto !important;
+  transform: translate(-50%, -50%) !important;
+  direction: ltr !important; /* Flags aur layout ko uniform rakhne ke liye */
+}
+
+/* Drawer Items me Text aur Icon Spacing Fix */
+[dir="rtl"] .drawer-item {
+  flex-direction: row-reverse !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+}
