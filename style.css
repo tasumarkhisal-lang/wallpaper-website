@@ -1277,3 +1277,80 @@ html[lang="ar"] .side-drawer.active {
   justify-content: flex-end !important;
   gap: 12px !important;
 }
+/* ==========================================
+   🎯 HEADER BUTTONS UNIFORM CIRCLE & HOVER FIX
+   ========================================== */
+
+/* Teeno buttons ke liye common circle style aur background */
+.fav-btn, 
+.theme-toggle-btn, 
+.login-btn,
+.profile-btn,
+.nav-actions button,
+.nav-actions a {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  border-radius: 50% !important; /* Perfect Circle */
+  background-color: #1e293b !important; /* Default dark circle color */
+  color: #ffffff !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease-in-out !important;
+  text-decoration: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Icon size inside buttons */
+.fav-btn i, 
+.theme-toggle-btn i, 
+.login-btn i,
+.profile-btn i,
+.nav-actions button i,
+.nav-actions a i,
+.fav-btn svg,
+.theme-toggle-btn svg,
+.login-btn svg,
+.profile-btn svg {
+  font-size: 1.1rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Favorites count (1) Badge Position Adjustement */
+.fav-count,
+.favorites-count {
+  position: absolute !important;
+  top: -2px !important;
+  right: -2px !important;
+  background-color: #ef4444 !important; /* Red notification badge */
+  color: #ffffff !important;
+  font-size: 0.68rem !important;
+  font-weight: bold !important;
+  padding: 2px 5px !important;
+  border-radius: 10px !important;
+  line-height: 1 !important;
+}
+
+/* Relative positioning for parent button to position badge correctly */
+.fav-btn, .favorites-btn {
+  position: relative !important;
+}
+
+/* 🔵 Hover Effect: Bright Blue background on Mouse Hover */
+.fav-btn:hover, 
+.theme-toggle-btn:hover, 
+.login-btn:hover,
+.profile-btn:hover,
+.nav-actions button:hover,
+.nav-actions a:hover {
+  background-color: #3b82f6 !important; /* Bright Blue Hover Color */
+  border-color: #3b82f6 !important;
+  transform: translateY(-2px) !important; /* Subtle uplift on hover */
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
+}
