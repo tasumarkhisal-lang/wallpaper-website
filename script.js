@@ -790,3 +790,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+// ==========================================
+// 📱 SIDEBAR BUTTONS CLICK HANDLER FIX
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+  const sidebarNavLinks = document.querySelectorAll('.sidebar a, #sidebarMenu a, .drawer a');
+  const sidebarDrawer = document.querySelector('.sidebar, #sidebarMenu, .drawer');
+  const overlay = document.querySelector('.overlay, #overlay');
+
+  sidebarNavLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href');
+
+      // Agar link kisi element ID ko target kar raha hai (e.g. #gallery)
+      if (href && href.startsWith('#') && href.length > 1) {
+        e.preventDefault();
+        const targetElement = document.querySelector(href);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+
+      // Action ke baad sidebar aur overlay ko close kar dein
+      if (sidebarDrawer) sidebarDrawer.classList.remove('active', 'open');
+      if (overlay) overlay.classList.remove('active', 'show');
+    });
+  });
+});
