@@ -145,7 +145,7 @@ const translations = {
     searchPlaceholder: "Поиск...", searchBtn: "Искать",
     catAll: "Все", catNature: "Природа", catAnime: "Аниме", catCars: "Машины", catAesthetic: "Эстетика", catDark: "Темные",
     lblSort: "Сортировка:", optRelevant: "По релевантности", optLatest: "Сначала новые",
-    lblColor: "Цвет:", optAllColors: "Все цвета", optBW: "Черно-белые", optBlue: "Синий", optRed: "Красный", optGreen: "Зеленый", optYellow: "Желтый", optPurple: "Фиолетовый",
+    lblColor: "Цвет:", optAllColors: "Все цвета", optBW: "Черно-белые", optBlue: "Синий", optRed: "Красный", optGreen: "Зеленый", optYellow: "Зеленый", optPurple: "Фиолетовый",
     lblOrientation: "Ориентация:", optAllOrientations: "Все", optLandscape: "Альбомная", optPortrait: "Портретная", optSquare: "Квадратная",
     loadingText: "Загрузка обоев...", btnDownload: "Скачать оригинал", btnFavorite: "Избранное", btnShare: "Поделиться", relatedTitle: "Похожие обои",
     shareTitle: "Поделиться обоями", shareSub: "Скопируйте ссылку или поделитесь в соцсетях:", btnCopy: "Копировать",
@@ -238,7 +238,7 @@ function toggleLanguage(e) {
   if (btn) {
     const rect = btn.getBoundingClientRect();
     langBox.style.position = 'fixed';
-    
+
     if (isRtl) {
       langBox.style.right = `${window.innerWidth - rect.left + 10}px`;
       langBox.style.left = 'auto';
@@ -312,6 +312,11 @@ function showToast(message) {
   setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
 }
 
+function updateFavCount() {
+  if (favCounter) {
+    favCounter.textContent = favorites.length;
+  }
+}
 
 // ==========================================
 // 📥 DOWNLOAD & FAVORITES LOGIC
@@ -688,140 +693,100 @@ function filterCategory(categoryName, event) {
 // 🚀 NAVIGATION VIEWS & SIDEBAR MENU
 // ==========================================
 function updateActiveNav(elementId) {
-  document.querySelectorAll('.sidebar .nav-icon').forEach(icon => icon.classList.remove('active'));
+  document.querySelectorAll('.sidebar .nav-icon, .mobile-drawer .drawer-link').forEach(icon => icon.classList.remove('active'));
   const activeElem = document.getElementById(elementId);
   if (activeElem) activeElem.classList.add('active');
 }
 
-function showHomeView(e) {
-  if (e) e.preventDefault();
+function loadHomeView() {
   isLiveWallpaperMode = false;
-  updateActiveNav('navHome');
   currentQuery = '4k wallpaper';
+  updateActiveNav('navHome');
   resetGallery();
   fetchWallpapers(currentQuery, currentPage);
 }
 
-function showGalleryView(e) {
-  if (e) e.preventDefault();
-  isLiveWallpaperMode = false;
-  updateActiveNav('navGallery');
-  currentQuery = 'hd wallpaper';
-  resetGallery();
-  fetchWallpapers(currentQuery, currentPage);
-}
-
-function showVideosView(e) {
-  if (e) e.preventDefault();
+function loadLiveWallpapersView() {
   isLiveWallpaperMode = true;
-  updateActiveNav('navVideos');
-  currentQuery = 'live 4k wallpaper animated';
-  resetGallery();
-  fetchWallpapers(currentQuery, currentPage);
-  showToast("🎬 Live 4K Mode Activated!");
-}
-
-function showExploreView(e) {
-  if (e) e.preventDefault();
-  isLiveWallpaperMode = false;
+  currentQuery = 'live wallpaper animated';
   updateActiveNav('navExplore');
-  currentQuery = 'aesthetic desktop backgrounds';
   resetGallery();
   fetchWallpapers(currentQuery, currentPage);
 }
 
-function showDownloadsView(e) {
-  if (e) e.preventDefault();
-  isLiveWallpaperMode = false;
-  updateActiveNav('navDownloads');
-  isFavoritesView = true;
-  if (gallery) gallery.innerHTML = '';
-
-  if (downloadHistory.length === 0) {
-    if (gallery) {
-      gallery.innerHTML = `
-        <div class="empty-view-state">
-          <i class="fa-solid fa-download"></i>
-          <h3>No Downloads Yet</h3>
-          <p>Downloaded wallpapers will appear here for quick access.</p>
-        </div>`;
-    }
-    return;
-  }
-
-  downloadHistory.forEach(item => {
-    const photo = {
-      id: item.id || Date.now(),
-      src: { large: item.url, original: item.url },
-      photographer: item.name || 'Downloaded Image',
-      alt: item.name || 'Wallpaper'
-    };
-    renderCard(photo);
-  });
+function toggleSideDrawer() {
+  const drawer = document.getElementById('sideDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if (drawer) drawer.classList.toggle('open');
+  if (overlay) overlay.classList.toggle('active');
 }
 
-function showBookmarksView(e) {
-  if (e) e.preventDefault();
-  updateActiveNav('navBookmarks');
-  showFavorites();
+function closeSideDrawer() {
+  const drawer = document.getElementById('sideDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if (drawer) drawer.classList.remove('open');
+  if (overlay) overlay.classList.remove('active');
 }
 
 // ==========================================
-// 🌙 THEME TOGGLE & INITIALIZATION
+// 🌙 THEME TOGGLE (DARK / LIGHT MODE)
 // ==========================================
-if (themeToggleBtn) {
-  themeToggleBtn.addEventListener('click', () => {
-    document.body.classList.toggle('light-mode');
-    const isLight = document.body.classList.contains('light-mode');
-    themeToggleBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-    localStorage.setItem('site_theme', isLight ? 'light' : 'dark');
-  });
-}
+function toggleTheme() {
+  document.body.classList.toggle('light-mode');
+  const isLight = document.body.classList.contains('light-mode');
+  localStorage.setItem('site_theme', isLight ? 'light' : 'dark');
 
-// Search Listeners
-if (searchBtn) searchBtn.addEventListener('click', handleSearch);
-if (searchInput) {
-  searchInput.addEventListener('keyup', (e) => {
-    if (e.key === 'Enter') handleSearch();
-  });
-  searchInput.addEventListener('focus', () => {
-    renderRecentSearches();
-    if (recentSearches.length > 0 && recentSearchesContainer) {
-      recentSearchesContainer.classList.add('show');
-    }
-  });
-}
-
-// Close Recent Searches Box on Outside Click
-document.addEventListener('click', (e) => {
-  if (recentSearchesContainer && !recentSearchesContainer.contains(e.target) && e.target !== searchInput) {
-    recentSearchesContainer.classList.remove('show');
+  if (themeToggleBtn) {
+    themeToggleBtn.innerHTML = isLight ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
   }
-});
+}
 
-// Infinite Scroll
+function initTheme() {
+  const savedTheme = localStorage.getItem('site_theme');
+  if (savedTheme === 'light') {
+    document.body.classList.add('light-mode');
+    if (themeToggleBtn) themeToggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+  }
+}
+
+// ==========================================
+// 📜 INFINITE SCROLL LISTENER
+// ==========================================
 window.addEventListener('scroll', () => {
-  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
-    if (!isLoading && hasMore && !isFavoritesView) {
+  if (isFavoritesView) return;
+  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 800) {
+    if (!isLoading && hasMore) {
       currentPage++;
       fetchWallpapers(currentQuery, currentPage);
     }
   }
 });
 
-// App Initialization
+// ==========================================
+// 🚀 APPLICATION INITIALIZATION
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-  // Restore Theme
-  const savedTheme = localStorage.getItem('site_theme');
-  if (savedTheme === 'light') {
-    document.body.classList.add('light-mode');
-    if (themeToggleBtn) themeToggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+  applyLanguage(currentLang);
+  initTheme();
+  updateFavCount();
+  fetchWallpapers(currentQuery, currentPage);
+
+  if (searchBtn) searchBtn.onclick = handleSearch;
+  if (searchInput) {
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleSearch();
+    });
+    searchInput.addEventListener('focus', () => {
+      renderRecentSearches();
+      if (recentSearches.length > 0 && recentSearchesContainer) {
+        recentSearchesContainer.classList.add('show');
+      }
+    });
   }
 
-  // Restore Language & Favorites Count
-  applyLanguage(currentLang);
-  updateFavCount();
-
-  // Initial Fetch
-  fetchWallpapers(currentQuery, currentPage);
+  document.addEventListener('click', (e) => {
+    if (recentSearchesContainer && !recentSearchesContainer.contains(e.target) && e.target !== searchInput) {
+      recentSearchesContainer.classList.remove('show');
+    }
+  });
 });
