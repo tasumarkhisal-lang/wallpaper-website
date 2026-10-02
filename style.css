@@ -10,6 +10,7 @@
   --border-color: #1f2937;
   --overlay-bg: rgba(11, 15, 25, 0.75);
   --live-badge-bg: linear-gradient(135deg, #ef4444 0%, #f59e0b 100%);
+  
 }
 
 body.light-mode {
@@ -1420,4 +1421,98 @@ html[dir="rtl"] .nav-menu .language-dropdown,
 /* Ensure mobile sidebar keeps full layout visible */
 .sidebar, .nav-menu {
   overflow-x: visible !important;
+}
+/* Mobile view CSS for Sidebar */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px; /* Initially hidden */
+        width: 280px;
+        height: 100vh;
+        z-index: 9999;
+        transition: left 0.3s ease-in-out;
+    }
+
+    .sidebar.active {
+        left: 0; /* Menu opens on active */
+    }
+
+    /* Optional Overlay Background */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9998;
+        display: none;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+}
+/* ==========================================
+   THEME CONNECTIVITY & OVERRIDE
+   ========================================== */
+body {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+}
+
+.sidebar, .side-drawer {
+  background-color: var(--sidebar-bg) !important;
+  border-color: var(--border-color) !important;
+}
+
+.card {
+  background-color: var(--card-bg) !important;
+}
+
+input, select {
+  background-color: var(--input-bg) !important;
+  color: var(--text-color) !important;
+}
+/* ==========================================
+   🌐 GLOBAL LIGHT MODE STYLES FOR WHOLE SITE
+   ========================================== */
+
+/* Main Background and Text */
+body.light-mode {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+}
+
+/* Header / Navbar */
+body.light-mode .navbar,
+body.light-mode header {
+  background-color: var(--sidebar-bg) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* Wallpaper Cards & Containers */
+body.light-mode .card,
+body.light-mode .modal-content,
+body.light-mode .custom-lang-popup {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Search Box & Inputs */
+body.light-mode input,
+body.light-mode select,
+body.light-mode .search-box {
+  background-color: var(--input-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Text Muted Fix */
+body.light-mode .text-muted,
+body.light-mode p,
+body.light-mode .hero-subtitle {
+  color: var(--text-muted) !important;
 }

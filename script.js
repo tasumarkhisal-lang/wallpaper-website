@@ -729,26 +729,47 @@ function closeSideDrawer() {
 }
 
 // ==========================================
-// 🌙 THEME TOGGLE (DARK / LIGHT MODE)
+// 🌙/☀️ THEME TOGGLE SYSTEM
 // ==========================================
-function toggleTheme() {
-  document.body.classList.toggle('light-mode');
-  const isLight = document.body.classList.contains('light-mode');
-  localStorage.setItem('site_theme', isLight ? 'light' : 'dark');
+document.addEventListener('DOMContentLoaded', () => {
+    const themeBtn = document.getElementById('themeToggleBtn');
+    
+    // Check saved theme preference
+    const savedTheme = localStorage.getItem('site_theme');
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+        updateThemeIcon(true);
+    }
 
-  if (themeToggleBtn) {
-    themeToggleBtn.innerHTML = isLight ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
-  }
-}
+    if (themeBtn) {
+        themeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Toggle light-mode class on body
+            const isLight = document.body.classList.toggle('light-mode');
+            
+            // Save state in localStorage
+            localStorage.setItem('site_theme', isLight ? 'light' : 'dark');
+            
+            // Update Icon
+            updateThemeIcon(isLight);
+            
+            showToast(isLight ? "Switched to Light Mode ☀️" : "Switched to Dark Mode 🌙");
+        });
+    }
 
-function initTheme() {
-  const savedTheme = localStorage.getItem('site_theme');
-  if (savedTheme === 'light') {
-    document.body.classList.add('light-mode');
-    if (themeToggleBtn) themeToggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
-  }
-}
-
+    function updateThemeIcon(isLight) {
+        if (!themeBtn) return;
+        const icon = themeBtn.querySelector('i');
+        if (icon) {
+            if (isLight) {
+                icon.className = 'fa-solid fa-sun';
+            } else {
+                icon.className = 'fa-solid fa-moon';
+            }
+        }
+    }
+});
 // ==========================================
 // 📜 INFINITE SCROLL LISTENER
 // ==========================================
@@ -816,4 +837,172 @@ document.addEventListener('DOMContentLoaded', () => {
       if (overlay) overlay.classList.remove('active', 'show');
     });
   });
+});
+// ==========================================
+// 🍔 HAMBURGER SIDEBAR TOGGLE SYSTEM
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    const menuBtn = document.getElementById('menuBtn') || document.querySelector('.hamburger-btn') || document.querySelector('.fa-bars')?.parentElement;
+    const sidebar = document.getElementById('sidebar') || document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebarOverlay') || document.querySelector('.sidebar-overlay');
+
+    // Sidebar Open/Close Function
+    function toggleSidebar(e) {
+        if (e) e.stopPropagation();
+        if (sidebar) {
+            sidebar.classList.toggle('active');
+            if (overlay) overlay.classList.toggle('active');
+        }
+    }
+
+    // Close Sidebar Function
+    function closeSidebar() {
+        if (sidebar) sidebar.classList.remove('active');
+        if (overlay) overlay.classList.remove('active');
+    }
+
+    // Event Listeners
+    if (menuBtn) {
+        menuBtn.addEventListener('click', toggleSidebar);
+    }
+
+    if (overlay) {
+        overlay.addEventListener('click', closeSidebar);
+    }
+
+    // Close sidebar on clicking outside in mobile view
+    document.addEventListener('click', (e) => {
+        if (sidebar && sidebar.classList.contains('active')) {
+            if (!sidebar.contains(e.target) && menuBtn && !menuBtn.contains(e.target)) {
+                closeSidebar();
+            }
+        }
+    });
+});
+// ==========================================
+// 🚀 HAMBURGER MENU & THEME TOGGLE FIXES
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+
+    // 1. 🌙/☀️ LIGHT & DARK THEME TOGGLE
+    const themeBtn = document.getElementById('themeToggleBtn');
+    
+    // Pehle se saved theme check karna
+    if (localStorage.getItem('site_theme') === 'light') {
+        document.body.classList.add('light-mode');
+    }
+
+    if (themeBtn) {
+        themeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Body par light-mode class toggle karna
+            const isLight = document.body.classList.toggle('light-mode');
+            
+            // Browser mein selection save karna
+            localStorage.setItem('site_theme', isLight ? 'light' : 'dark');
+            
+            // Toast notification show karna (agar toast function mojood hai)
+            if (typeof showToast === 'function') {
+                showToast(isLight ? "Switched to Light Mode ☀️" : "Switched to Dark Mode 🌙");
+            }
+        });
+    }
+
+    // 2. 🍔 MOBILE SIDE DRAWER TOGGLE
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn') || document.getElementById('menuToggleBtn') || document.querySelector('.fa-bars')?.parentElement;
+    const sideDrawer = document.querySelector('.side-drawer');
+    const menuOverlay = document.querySelector('.menu-overlay');
+    const closeDrawerBtn = document.querySelector('.close-drawer-btn');
+
+    function openDrawer(e) {
+        if (e) e.stopPropagation();
+        if (sideDrawer) sideDrawer.classList.add('active');
+        if (menuOverlay) menuOverlay.classList.add('active');
+    }
+
+    function closeDrawer() {
+        if (sideDrawer) sideDrawer.classList.remove('active');
+        if (menuOverlay) menuOverlay.classList.remove('active');
+    }
+
+    if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', openDrawer);
+    if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
+    if (menuOverlay) menuOverlay.addEventListener('click', closeDrawer);
+});
+// ==========================================
+// 📱 MOBILE SIDEBAR DRAWER FULL FUNCTIONALITY
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+
+    const sideDrawer = document.querySelector('.side-drawer');
+    const menuOverlay = document.querySelector('.menu-overlay');
+
+    // Close Drawer Helper
+    function closeDrawer() {
+        if (sideDrawer) sideDrawer.classList.remove('active');
+        if (menuOverlay) menuOverlay.classList.remove('active');
+    }
+
+    // 1. Home Link
+    const navHome = document.getElementById('drawerNavHome') || document.querySelector('.side-drawer a[href="#home"]');
+    if (navHome) {
+        navHome.addEventListener('click', (e) => {
+            e.preventDefault();
+            isFavoritesView = false;
+            isLiveWallpaperMode = false;
+            currentQuery = '4k wallpaper';
+            if (typeof resetGallery === 'function') resetGallery();
+            if (typeof fetchWallpapers === 'function') fetchWallpapers(currentQuery, 1);
+            closeDrawer();
+        });
+    }
+
+    // 2. Favorites Link (Favorites View Open Karega)
+    const navFav = document.getElementById('drawerNavFav') || document.querySelector('.side-drawer a[href="#favorites"]');
+    if (navFav) {
+        navFav.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (typeof showFavorites === 'function') showFavorites();
+            closeDrawer();
+        });
+    }
+
+    // 3. Explore / Categories Link
+    const navExplore = document.getElementById('drawerNavExplore') || document.querySelector('.side-drawer a[href="#explore"]');
+    if (navExplore) {
+        navExplore.addEventListener('click', (e) => {
+            e.preventDefault();
+            isFavoritesView = false;
+            isLiveWallpaperMode = false;
+            currentQuery = 'trending 4k';
+            if (typeof resetGallery === 'function') resetGallery();
+            if (typeof fetchWallpapers === 'function') fetchWallpapers(currentQuery, 1);
+            closeDrawer();
+        });
+    }
+
+    // 4. Live Wallpapers Mode Link
+    const navLive = document.getElementById('drawerNavLive') || document.querySelector('.side-drawer a[href="#live"]');
+    if (navLive) {
+        navLive.addEventListener('click', (e) => {
+            e.preventDefault();
+            isFavoritesView = false;
+            isLiveWallpaperMode = true;
+            currentQuery = 'live animated background';
+            if (typeof resetGallery === 'function') resetGallery();
+            if (typeof fetchWallpapers === 'function') fetchWallpapers(currentQuery, 1);
+            closeDrawer();
+        });
+    }
+
+    // 5. Settings / Language Trigger
+    const navSettings = document.getElementById('drawerNavSettings') || document.querySelector('.side-drawer a[href="#settings"]');
+    if (navSettings) {
+        navSettings.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeDrawer();
+            if (typeof toggleLanguage === 'function') toggleLanguage(e);
+        });
+    }
 });
